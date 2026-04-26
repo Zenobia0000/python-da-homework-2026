@@ -93,7 +93,6 @@ def red_clean_orders(path):
     df.columns = df.columns.str.strip().str.lower()
     df["amount"] = df["amount"].str.replace("$", "").str.replace(",", "").astype(float)
     df["order_date"] = pd.to_datetime(df["order_date"], errors="coerce")
-    df.dropna(subset="amount", inplace=True)
-    df.dropna(subset="order_date", inplace=True)
+    df.dropna(subset=["amount", "order_date"], inplace=True)
     df.drop_duplicates(inplace=True)
     return df
