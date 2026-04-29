@@ -6,7 +6,7 @@ M5 Matplotlib & Seaborn 視覺化 — 課後作業
 資料路徑：datasets/ecommerce/orders_enriched.csv
 """
 import matplotlib
-matplotlib.use("Agg")  # 無 GUI 環境也能跑
+# matplotlib.use("Agg")  # 無 GUI 環境也能跑
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
@@ -17,6 +17,10 @@ def _load_data():
     return pd.read_csv("datasets/ecommerce/orders_enriched.csv",
                        parse_dates=["order_date"])
 
+# 顯示中文
+sns.set_theme(style='whitegrid')
+plt.rcParams['font.family'] = 'Microsoft JhengHei'  # Windows 正黑體
+plt.rcParams['axes.unicode_minus'] = False
 
 # ============================================================
 # 🟢 送分題（每題 10 分，共 30 分）
@@ -28,8 +32,10 @@ def green_bar_category():
     回傳 matplotlib Figure 物件
     提示：sns.countplot 或 value_counts().plot.bar()
     """
-    # TODO: 你的程式碼
-    pass
+    #axes = sns.countplot(x='category', data=df)
+    axes = _load_data()['category'].value_counts().plot.bar()
+    return axes.figure
+
 
 
 def green_hist_amount():
@@ -38,8 +44,9 @@ def green_hist_amount():
     回傳 matplotlib Figure 物件
     提示：sns.histplot(bins=20) 或 plt.hist()
     """
-    # TODO: 你的程式碼
-    pass
+    axes = sns.histplot(x="amount", data=_load_data(), bins=20)
+    return axes.get_figure()
+
 
 
 def green_set_labels():
@@ -50,8 +57,13 @@ def green_set_labels():
     - Y 軸標籤 (ylabel)
     回傳 matplotlib Figure 物件
     """
-    # TODO: 你的程式碼
-    pass
+    fig = plt.figure(figsize=(8, 4))
+    sns.barplot(data=_load_data(), x='vip_level', y='amount', palette='Set2', hue='vip_level')
+    plt.title("不同客戶級別消費力", loc="center")
+    plt.xlabel("客戶等級")
+    plt.ylabel("總金額")
+    return fig
+
 
 
 # ============================================================
@@ -70,6 +82,8 @@ def yellow_line_region_trend():
     # TODO: 你的程式碼
     pass
 
+# graph = yellow_line_region_trend()
+# plt.show()
 
 def yellow_box_vip():
     """
