@@ -19,8 +19,7 @@ def green_read_csv():
     讀取 orders_raw.csv，回傳原始 DataFrame（不做任何清理）
     提示：pd.read_csv()
     """
-    # TODO: 你的程式碼
-    pass
+    return pd.read_csv("datasets/ecommerce/orders_raw.csv")
 
 
 def green_shape(df):
@@ -28,8 +27,6 @@ def green_shape(df):
     回傳 DataFrame 的 (列數, 欄數) tuple
     提示：df.shape
     """
-    # TODO: 你的程式碼
-    pass
 
 
 def green_dtypes(df):
