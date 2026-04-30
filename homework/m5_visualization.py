@@ -28,8 +28,12 @@ def green_bar_category():
     回傳 matplotlib Figure 物件
     提示：sns.countplot 或 value_counts().plot.bar()
     """
-    # TODO: 你的程式碼
-    pass
+    df = _load_data()
+
+    fig, ax = plt.subplot(figsize=(8, 5))
+    df["categroy"].value_counts().plot.bar(ax=ax)
+    ax.set_title("訂單數 by Category")
+    return fig
 
 
 def green_hist_amount():
@@ -38,8 +42,11 @@ def green_hist_amount():
     回傳 matplotlib Figure 物件
     提示：sns.histplot(bins=20) 或 plt.hist()
     """
-    # TODO: 你的程式碼
-    pass
+    df = _load_data()
+
+    fig, ax = plt.subplot(figsize=(8, 5))
+    ax.hist(df["amount"], bins=20)
+    return fig
 
 
 def green_set_labels():
@@ -50,8 +57,12 @@ def green_set_labels():
     - Y 軸標籤 (ylabel)
     回傳 matplotlib Figure 物件
     """
-    # TODO: 你的程式碼
-    pass
+    fig, ax = plt.subplots()
+    ax.bar(["A", "B", "C"], [10, 20, 30])
+    ax.set_title("範圍圖表")
+    ax.set_xlabel("類別")
+    ax.set_ylabel("數值")
+    return fig
 
 
 # ============================================================
@@ -67,9 +78,16 @@ def yellow_line_region_trend():
     回傳 matplotlib Figure 物件
     提示：分別 groupby 再 plot，或用 sns.lineplot(hue='region')
     """
-    # TODO: 你的程式碼
-    pass
+    df = _load_data()
 
+    fig, ax = plt.subplot(figsize=(10, 5))
+    for region in ["North", "South"]:
+        sub = df[df["region"] == region]
+        monthly = sub.set_index("order_date").resample("ME")["amount"].sum()
+        ax.plot(monthly.index, monthly.values, label=region)
+    ax.legend()
+    ax.set_title("月營收趨勢 by Region")
+    return fig
 
 def yellow_box_vip():
     """
@@ -77,9 +95,11 @@ def yellow_box_vip():
     回傳 matplotlib Figure 物件
     提示：sns.boxplot(x='vip_level', y='amount', data=df)
     """
-    # TODO: 你的程式碼
-    pass
+    df = _load_data()
 
+    fig, ax = plt.subplot(figsize=(8, 5))
+    sns.boxplot(data=df, x="vip_level", y="amount", ax=ax)
+    return fig
 
 def yellow_scatter_price_amount():
     """
@@ -87,9 +107,13 @@ def yellow_scatter_price_amount():
     回傳 matplotlib Figure 物件
     提示：plt.scatter() 或 sns.scatterplot()
     """
-    # TODO: 你的程式碼
-    pass
+    df = _load_data()
 
+    fig, ax = plt.subplot(figsize=(8, 5))
+    ax.scatter(df["unit_price"], df["amount"], alpha=0.5)
+    ax.set_xlebal("Unit Price")
+    ax.set_ylabel("Amount")
+    return fig
 
 # ============================================================
 # 🔴 挑戰題（25 分）
@@ -106,5 +130,27 @@ def red_category_dashboard(category="Electronics"):
     回傳 matplotlib Figure 物件
     提示：fig, axes = plt.subplots(2, 2, figsize=(14, 10))
     """
-    # TODO: 你的程式碼
-    pass
+    df = _load_data()
+
+    cat_df = df[df["category"] == category]
+    fig, axes = plt.subplot(2, 2, figsize=(14, 10))
+
+    # 左上
+    monthly = cat_df.set_index("order_date").resample("ME")["amount"]
+    axes[0, 0].plot(monthly.index, monthly.values)
+    axes[0, 0].set_title(f"{category} 月營收趨勢")
+
+    # 右上
+    cat_df.groupby("region")["amount"].sum().plot.bar(ax=axes[0, 1])
+    axes[0, 1].set_title(f"{category} 地區營收")
+
+    # 左下
+    cat_df.groupby("product_name")["amount"].sum().nlargest(5).plot.barh(ax=axes[1, 0])
+    axes[1, 0].set_title(f"{category} Top 5 商品")
+
+    # 右下
+    axes[1, 1].hist(cat_df['amount'], bins=15)
+    axes[1, 1].set_title(f"{category} 金額分佈")
+
+    fig.tight_layout()
+    return fig
