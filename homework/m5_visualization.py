@@ -29,8 +29,10 @@ def green_bar_category():
     提示：sns.countplot 或 value_counts().plot.bar()
     """
     # TODO: 你的程式碼
-    pass
-
+    df = _load_data()
+    plt.figure(figsize=(8, 4))
+    fig = sns.barplot(data=df, x='region', y='amount', palette='viridis', hue='region', legend=False)
+    return fig
 
 def green_hist_amount():
     """
@@ -39,7 +41,15 @@ def green_hist_amount():
     提示：sns.histplot(bins=20) 或 plt.hist()
     """
     # TODO: 你的程式碼
-    pass
+    df = _load_data()
+    # 建立畫布與座標軸
+    fig, ax = plt.subplots(figsize=(10, 4))
+    
+    # 畫出直方圖，指定 bins=20
+    sns.histplot(data=df, x='amount', bins=20, ax=ax, color='skyblue', kde=True)
+    
+    ax.set_title("Distribution of Order Amounts")
+    return fig
 
 
 def green_set_labels():
@@ -51,7 +61,13 @@ def green_set_labels():
     回傳 matplotlib Figure 物件
     """
     # TODO: 你的程式碼
-    pass
+    df = _load_data()
+    plt.figure(figsize=(8, 4))
+    fig = sns.barplot(data=df, x='region', y='amount', palette='viridis', hue='region', legend=False)
+    plt.title('This is title', fontweight='bold')
+    plt.xlabel('This is xlabel')
+    plt.ylabel('This is ylabel')
+    return fig
 
 
 # ============================================================
