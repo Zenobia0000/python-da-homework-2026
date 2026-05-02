@@ -24,19 +24,37 @@ def green_load_and_merge():
     提示：pd.merge(how='left')
     """
     # TODO: 你的程式碼
-    pass
+    data = '../datasets/ecommerce'
+    orders = pd.read_csv(f'{data}/orders_clean.csv',parse_dates=['order_date'])
+    customers = pd.read_csv(f'{data}/customers.csv')
+    products  = pd.read_csv(f'{data}/products.csv')
+    orders = orders.merge(customers,on='customer_id',how='left').merge(products, on='product_id',how='left')
+    return orders
+
 
 
 def green_row_count(df):
     """回傳 DataFrame 的列數 (int)"""
     # TODO: 你的程式碼
-    pass
+    data = '../datasets/ecommerce'
+    orders = pd.read_csv(f'{data}/orders_clean.csv',parse_dates=['order_date'])
+    customers = pd.read_csv(f'{data}/customers.csv')
+    products  = pd.read_csv(f'{data}/products.csv')
+    orders = orders.merge(customers,on='customer_id',how='left').merge(products, on='product_id',how='left')
+    df = pd.DataFrame(orders)
+    return len(df)
 
 
 def green_column_list(df):
     """回傳 DataFrame 的所有欄位名稱 (list)"""
     # TODO: 你的程式碼
-    pass
+    data = '../datasets/ecommerce'
+    orders = pd.read_csv(f'{data}/orders_clean.csv',parse_dates=['order_date'])
+    customers = pd.read_csv(f'{data}/customers.csv')
+    products  = pd.read_csv(f'{data}/products.csv')
+    orders = orders.merge(customers,on='customer_id',how='left').merge(products, on='product_id',how='left')
+    df = pd.DataFrame(orders)
+    return df.columns.tolist()
 
 
 # ============================================================
@@ -50,7 +68,14 @@ def yellow_top_category(df):
     提示：groupby('category')['amount'].sum()
     """
     # TODO: 你的程式碼
-    pass
+    data = '../datasets/ecommerce'
+    orders = pd.read_csv(f'{data}/orders_clean.csv',parse_dates=['order_date'])
+    customers = pd.read_csv(f'{data}/customers.csv')
+    products  = pd.read_csv(f'{data}/products.csv')
+    orders = orders.merge(customers,on='customer_id',how='left').merge(products, on='product_id',how='left')
+    df = pd.DataFrame(orders)
+    category = df.groupby('category')['amount'].sum().sort_values(ascending=False).head(1)
+    return category
 
 
 def yellow_gold_vip_stats(df):
@@ -60,7 +85,17 @@ def yellow_gold_vip_stats(df):
     提示：df[df['vip_level'] == 'Gold']
     """
     # TODO: 你的程式碼
-    pass
+    data = '../datasets/ecommerce'
+    orders = pd.read_csv(f'{data}/orders_clean.csv',parse_dates=['order_date'])
+    customers = pd.read_csv(f'{data}/customers.csv')
+    products  = pd.read_csv(f'{data}/products.csv')
+    orders = orders.merge(customers,on='customer_id',how='left').merge(products, on='product_id',how='left')
+    df = pd.DataFrame(orders)
+    gold_mask = df['vip_level'] =='Gold'
+    gold_order = df.loc[gold_mask]
+    gold_count = len(gold_mask)
+    amount_total = gold_order['amount'].sum()
+    return gold_count,amount_total
 
 
 def yellow_region_avg_amount(df):
@@ -70,7 +105,13 @@ def yellow_region_avg_amount(df):
     提示：groupby('region')['amount'].mean()
     """
     # TODO: 你的程式碼
-    pass
+    data = '../datasets/ecommerce'
+    orders = pd.read_csv(f'{data}/orders_clean.csv',parse_dates=['order_date'])
+    customers = pd.read_csv(f'{data}/customers.csv')
+    products  = pd.read_csv(f'{data}/products.csv')
+    orders = orders.merge(customers,on='customer_id',how='left').merge(products, on='product_id',how='left')
+    df = pd.DataFrame(orders)
+    return df.groupby('region')['amount'].mean()
 
 
 # ============================================================
@@ -94,4 +135,24 @@ def red_rfm_top5(df):
     提示：groupby('customer_id').agg(...)
     """
     # TODO: 你的程式碼
-    pass
+
+    data = '../datasets/ecommerce'
+    orders = pd.read_csv(f'{data}/orders_clean.csv',parse_dates=['order_date'])
+    customers = pd.read_csv(f'{data}/customers.csv')
+    products  = pd.read_csv(f'{data}/products.csv')
+    orders = orders.merge(customers,on='customer_id',how='left').merge(products, on='product_id',how='left')
+    df = pd.DataFrame(orders)
+    df['order_date'] = pd.to_datetime(df['order_date'])
+    rfm = df.groupby('customer_id').agg({
+        'order_date': 'max',
+        'order_id': 'count',  
+        'amount': 'sum',   
+        'customer_name': 'first'
+    })
+    rfm.rename(columns={
+        'order_date': 'R',
+        'order_id': 'F',
+        'amount': 'M'
+    }, inplace=True)
+    result = rfm[['customer_name', 'R', 'F', 'M']].sort_values(by='M', ascending=False).head(5)
+    return result.reset_index()
