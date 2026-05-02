@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -161,3 +162,9 @@ cython_debug/
 
 # Quiz plaintext answers (teacher-only, do NOT distribute)
 Special-Edition_python_DA/d7a8fbb7e57b479e21b7c90fdfab726b/quiz.csv
+=======
+__pycache__/
+*.pyc
+.pytest_cache/
+.pytest_results.json
+>>>>>>> 1280745d3a2b247599c4d5ddd09519d9b85c9974
