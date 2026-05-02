@@ -25,7 +25,7 @@ def green_plotly_bar():
     回傳 plotly Figure 物件
     提示：px.bar()
     """
-    df = pd.read_csv('orders_enriched.csv')
+    df = pd.read_csv('datasets/ecommerce/orders_enriched.csv')
     # 計算每個類別的總營收
     category_revenue = df.groupby('category', as_index=False)['amount'].sum()
     
@@ -46,7 +46,7 @@ def green_plotly_line():
     回傳 plotly Figure 物件
     提示：先 groupby 月份算總營收，再 px.line()
     """
-    df = pd.read_csv('orders_enriched.csv')
+    df = pd.read_csv('datasets/ecommerce/orders_enriched.csv')
     # 確保日期格式並轉換為「年-月」字串以利分組
     df['order_date'] = pd.to_datetime(df['order_date'])
     df['year_month'] = df['order_date'].dt.to_period('M').astype(str)
@@ -71,7 +71,7 @@ def green_plotly_pie():
     回傳 plotly Figure 物件
     提示：px.pie()
     """
-    df = pd.read_csv('orders_enriched.csv')
+    df = pd.read_csv('datasets/ecommerce/orders_enriched.csv')
     # 計算每個 VIP 等級的訂單數 (算列數或是唯一 order_id)
     vip_counts = df['vip_level'].value_counts().reset_index()
     vip_counts.columns = ['vip_level', 'order_count']
