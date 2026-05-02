@@ -19,7 +19,7 @@ def green_read_csv():
     讀取 orders_raw.csv，回傳原始 DataFrame（不做任何清理）
     提示：pd.read_csv()
     """
-    data = "../datasets/ecommerce/orders_raw.csv"
+    data = "datasets/ecommerce/orders_raw.csv"
     df = pd.read_csv(data)
     return df
 
@@ -50,8 +50,12 @@ def yellow_clean_columns(df):
     回傳清理後的 DataFrame（不要修改原始 df）
     提示：df.columns.str.strip().str.lower()
     """
-    df.columns = df.columns.str.strip().str.lower()
-    return df.columns
+    # 1. 先複製一份 df，避免動到原始資料
+    new_df = df.copy()
+    # 2. 修改這個副本的欄位名稱
+    new_df.columns = new_df.columns.str.strip().str.lower()
+    # 3. 回傳整個 DataFrame，而不是只回傳 columns
+    return new_df
     
 
 
@@ -62,13 +66,19 @@ def yellow_clean_amount(df):
     回傳清理後的 DataFrame（不要修改原始 df）
     提示：.str.replace() + .astype(float)
     """
-    clean_amount = (
-    df["amount"]
-    .str.replace("$", "",regex=False)
-    .str.replace(",", "", regex=False)
-    .astype(float)
+    # 1. 先複製一份，確保不影響原始資料
+    new_df = df.copy()
+    
+    # 2. 把處理完的結果，指定回副本的 "amount" 欄位中
+    new_df["amount"] = (
+        new_df["amount"]
+        .str.replace("$", "", regex=False)
+        .str.replace(",", "", regex=False)
+        .astype(float)
     )
-    return clean_amount
+    
+    # 3. 回傳整張 DataFrame
+    return new_df
 
     
 
@@ -108,7 +118,6 @@ def red_clean_orders(path):
         .astype(float)
     )
     df["order_date"] = pd.to_datetime(df["order_date"], errors="coerce")
-    df = df.dropna(subset=["order_date"])
-    df["qty"] = df.fillna(df["qty"].median)
+    df = df.dropna(subset=["amount", "order_date"])
     df = df.drop_duplicates()
     return df

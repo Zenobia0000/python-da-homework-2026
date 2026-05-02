@@ -23,9 +23,9 @@ def green_load_and_merge():
     - 再 LEFT JOIN products.csv ON product_id
     提示：pd.merge(how='left')
     """
-    orders_clean = pd.read_csv("../datasets/ecommerce/orders_clean.csv")
-    customers = pd.read_csv("../datasets/ecommerce/customers.csv")
-    products = pd.read_csv("../datasets/ecommerce/products.csv")
+    orders_clean = pd.read_csv("datasets/ecommerce/orders_clean.csv")
+    customers = pd.read_csv("datasets/ecommerce/customers.csv")
+    products = pd.read_csv("datasets/ecommerce/products.csv")
     df = (
         orders_clean
         .merge(customers, on="customer_id",how='left')
@@ -36,7 +36,7 @@ def green_load_and_merge():
 
 def green_row_count(df):
     """回傳 DataFrame 的列數 (int)"""
-    res = len(df.columns)
+    res = len(df)
     return res
 
 
@@ -105,6 +105,6 @@ def red_rfm_top5(df):
         R = ("order_date", "max"),
         F = ("order_id", "count"),
         M = ("amount", "sum")
-    )
+    ).reset_index()
     res = RFM_df.sort_values("M", ascending=False).head()
     return res

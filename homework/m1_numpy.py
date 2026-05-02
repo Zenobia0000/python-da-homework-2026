@@ -43,7 +43,7 @@ def green_filter():
 
 def yellow_expensive_count(prices):
     """回傳單價 > 1000 的商品數量 (int)"""
-    return prices[prices>1000]
+    return prices[prices>1000].size
 
 def yellow_top3_stock_indices(stocks):
     """
