@@ -6,15 +6,15 @@ M4 時間序列與 EDA — 課後作業
 
 資料路徑：datasets/ecommerce/orders_enriched.csv
 """
+
 import pandas as pd
 
 
 def _load_data():
     """輔助函式：讀取並解析日期"""
-    df = pd.read_csv("datasets/ecommerce/orders_enriched.csv",
+    df = pd.read_csv("../datasets/ecommerce/orders_enriched.csv",
                      parse_dates=["order_date"])
     return df
-
 
 # ============================================================
 # 🟢 送分題（每題 10 分，共 30 分）
@@ -27,7 +27,9 @@ def green_avg_by_month():
     提示：df['order_date'].dt.month
     """
     # TODO: 你的程式碼
-    pass
+    df = _load_data()
+    result = df.groupby(df['order_date'].dt.month)['amount'].mean()
+    return result
 
 
 def green_top3_dates():
@@ -37,7 +39,8 @@ def green_top3_dates():
     提示：value_counts().head(3)
     """
     # TODO: 你的程式碼
-    pass
+    df = _load_data()
+    return df['order_date'].value_counts().head(3)
 
 
 def green_date_range():
@@ -46,7 +49,9 @@ def green_date_range():
     格式為 pandas Timestamp
     """
     # TODO: 你的程式碼
-    pass
+    df = _load_data()
+
+    return df['order_date'].min(),df['order_date'].max()
 
 
 # ============================================================
@@ -60,7 +65,7 @@ def yellow_monthly_revenue():
     提示：set_index('order_date').resample('ME')['amount'].sum()
     """
     # TODO: 你的程式碼
-    pass
+    return 
 
 
 def yellow_rolling_avg(monthly_revenue):
