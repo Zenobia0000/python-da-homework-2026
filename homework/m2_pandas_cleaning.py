@@ -19,8 +19,7 @@ def green_read_csv():
     讀取 orders_raw.csv，回傳原始 DataFrame（不做任何清理）
     提示：pd.read_csv()
     """
-    # TODO: 你的程式碼
-    pass
+    return pd.read_csv('datasets/ecommerce/orders_raw.csv')
 
 
 def green_shape(df):
@@ -28,17 +27,14 @@ def green_shape(df):
     回傳 DataFrame 的 (列數, 欄數) tuple
     提示：df.shape
     """
-    # TODO: 你的程式碼
-    pass
-
+    return df.shape
 
 def green_dtypes(df):
     """
     回傳 DataFrame 的欄位型別 (Series)
     提示：df.dtypes
     """
-    # TODO: 你的程式碼
-    pass
+    return df.dtypes
 
 
 # ============================================================
@@ -51,9 +47,9 @@ def yellow_clean_columns(df):
     回傳清理後的 DataFrame（不要修改原始 df）
     提示：df.columns.str.strip().str.lower()
     """
-    # TODO: 你的程式碼
-    pass
-
+    df1= df.copy()
+    df1.columns = df1.columns.str.strip().str.lower()
+    return df1 
 
 def yellow_clean_amount(df):
     """
@@ -62,17 +58,16 @@ def yellow_clean_amount(df):
     回傳清理後的 DataFrame（不要修改原始 df）
     提示：.str.replace() + .astype(float)
     """
-    # TODO: 你的程式碼
-    pass
-
+    df2 = df.copy()
+    df2['amount'] = df2['amount'].astype(str).str.replace('$', '', regex=False).str.replace(',', '', regex=False).astype(float)
+    return df2
 
 def yellow_drop_duplicates(df):
     """
     移除完全重複的列，回傳去重後的 DataFrame
     提示：df.drop_duplicates()
     """
-    # TODO: 你的程式碼
-    pass
+    return df.drop_duplicates()
 
 
 # ============================================================
@@ -92,5 +87,11 @@ def red_clean_orders(path):
     回傳：清理後的 DataFrame
     提示：pd.to_datetime(errors='coerce')
     """
-    # TODO: 你的程式碼
-    pass
+    df = pd.read_csv(path)
+    df.columns = df.columns.str.strip().str.lower()
+    df['amount'] = df['amount'].astype(str).str.replace('$', '', regex=False).str.replace(',', '', regex=False).astype(float)
+    df['amount'] = pd.to_numeric(df['amount'], errors='coerce')
+    df['order_date'] = pd.to_datetime(df['order_date'], errors='coerce')
+    df = df.dropna(subset=['amount', 'order_date'])
+    df = df.drop_duplicates()
+    return df

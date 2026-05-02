@@ -25,8 +25,10 @@ def green_plotly_bar():
     回傳 plotly Figure 物件
     提示：px.bar()
     """
-    # TODO: 你的程式碼
-    pass
+    df = pd.read_csv("datasets/ecommerce/orders_enriched.csv")
+    res = df.groupby('category')['amount'].sum().reset_index()
+    fig = px.bar(res, x='category', y='amount', title="Total Revenue by Category")
+    return fig
 
 
 def green_plotly_line():
@@ -36,8 +38,10 @@ def green_plotly_line():
     回傳 plotly Figure 物件
     提示：先 groupby 月份算總營收，再 px.line()
     """
-    # TODO: 你的程式碼
-    pass
+    df = pd.read_csv("datasets/ecommerce/orders_enriched.csv", parse_dates=["order_date"])
+    res = df.set_index('order_date').resample('ME')['amount'].sum().reset_index()
+    fig = px.line(res, x='order_date', y='amount', title="Monthly Revenue Trend")
+    return fig
 
 
 def green_plotly_pie():
@@ -47,8 +51,9 @@ def green_plotly_pie():
     回傳 plotly Figure 物件
     提示：px.pie()
     """
-    # TODO: 你的程式碼
-    pass
+    df = pd.read_csv("datasets/ecommerce/orders_enriched.csv")
+    fig = px.pie(df, names='vip_level', title="Order Distribution by VIP Level")
+    return fig
 
 
 # ============================================================
@@ -62,8 +67,16 @@ def yellow_clean_and_merge(raw_path, customers_path, products_path):
     2. 合併 customers.csv 和 products.csv
     回傳：合併後的 DataFrame
     """
-    # TODO: 你的程式碼
-    pass
+    df = pd.read_csv(raw_path)
+    df.columns = df.columns.str.strip().str.lower()
+    df['amount'] = pd.to_numeric(df['amount'].astype(str).str.replace('$', '', regex=False).str.replace(',', '', regex=False), errors='coerce')
+    df['order_date'] = pd.to_datetime(df['order_date'], errors='coerce')
+    df = df.dropna(subset=['amount', 'order_date']).drop_duplicates()
+
+    cust = pd.read_csv(customers_path)
+    prod = pd.read_csv(products_path)
+    df = df.merge(cust, on='customer_id', how='left').merge(prod, on='product_id', how='left')
+    return df
 
 
 def yellow_kpi_summary(df):
@@ -76,8 +89,17 @@ def yellow_kpi_summary(df):
         "avg_order_value": float,     # 平均客單價
     }
     """
-    # TODO: 你的程式碼
-    pass
+    revenue = float(df['amount'].sum())
+    orders = int(len(df))
+    customers = int(df['customer_id'].nunique())
+    aov = float(revenue / orders) if orders > 0 else 0.0
+    
+    return {
+        "total_revenue": revenue,
+        "order_count": orders,
+        "active_customers": customers,
+        "avg_order_value": aov,
+    }
 
 
 def yellow_plotly_scatter(df):
@@ -90,8 +112,12 @@ def yellow_plotly_scatter(df):
     回傳 plotly Figure 物件
     提示：px.scatter(hover_data=['product_name'])
     """
-    # TODO: 你的程式碼
-    pass
+    fig = px.scatter(
+        df, x='unit_price', y='amount', color='category',
+        hover_data=['product_name'],
+        title="Price vs Amount Scatter Plot"
+    )
+    return fig
 
 
 # ============================================================
@@ -114,5 +140,31 @@ def red_dashboard():
     回傳 plotly Figure 物件
     提示：from plotly.subplots import make_subplots
     """
-    # TODO: 你的程式碼
-    pass
+    df = yellow_clean_and_merge(
+        "datasets/ecommerce/orders_raw.csv",
+        "datasets/ecommerce/customers.csv",
+        "datasets/ecommerce/products.csv"
+    )
+    
+    fig = make_subplots(
+        rows=2, cols=2,
+        subplot_titles=("Monthly Revenue Trend", "Top 10 Products", "Revenue by Region", "Category Share"),
+        specs=[[{"type": "xy"}, {"type": "xy"}],
+               [{"type": "xy"}, {"type": "domain"}]] 
+    )
+
+    trend = df.set_index('order_date').resample('ME')['amount'].sum().reset_index()
+    fig.add_trace(go.Scatter(x=trend['order_date'], y=trend['amount'], mode='lines+markers', name='Revenue'), row=1, col=1)
+
+    top10 = df.groupby('product_name')['amount'].sum().nlargest(10).reset_index()
+    fig.add_trace(go.Bar(x=top10['amount'], y=top10['product_name'], orientation='h', name='Product'), row=1, col=2)
+
+    region_rev = df.groupby('region')['amount'].sum().reset_index()
+    fig.add_trace(go.Bar(x=region_rev['region'], y=region_rev['amount'], name='Region'), row=2, col=1)
+
+    cat_rev = df.groupby('category')['amount'].sum().reset_index()
+    fig.add_trace(go.Pie(labels=cat_rev['category'], values=cat_rev['amount'], hole=.3), row=2, col=2)
+
+    fig.update_layout(height=800, title_text="Ecommerce Capstone Dashboard", showlegend=False)
+    
+    return fig
