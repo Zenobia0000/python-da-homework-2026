@@ -20,6 +20,7 @@ def green_mean():
     """建立 [10, 20, 30, 40, 50]，回傳所有元素的平均值 (float)"""
     arr = np.array([10, 20, 30, 40, 50])
     return arr.mean()
+    
 
 
 def green_double():
