@@ -31,7 +31,8 @@ def green_bar_category():
     # TODO: 你的程式碼
     df = _load_data()
     fig, ax = plt.subplots(figsize=(8, 5))
-    sns.countplot(data=df, x='category', order=df['category'].value_counts().index, ax=ax)
+    sns.countplot(data=df, x='category',
+                  order=df['category'].value_counts().index, ax=ax)
     ax.set_title('Orders by Category')
     ax.set_xlabel('Category')
     ax.set_ylabel('Order Count')
@@ -91,7 +92,6 @@ def yellow_line_region_trend():
     # TODO: 你的程式碼
     df = _load_data()
     df['month'] = df['order_date'].dt.to_period('M')
-        
     filtered = df[df['region'].isin(['North', 'South'])]
     monthly = (
         filtered.groupby(['month', 'region'])['amount']
@@ -99,7 +99,6 @@ def yellow_line_region_trend():
         .reset_index()
     )
     monthly['month'] = monthly['month'].dt.to_timestamp()
-        
     fig, ax = plt.subplots(figsize=(10, 5))
     sns.lineplot(data=monthly, x='month', y='amount', hue='region', ax=ax)
     ax.set_title('Monthly Revenue: North vs South')
@@ -166,6 +165,7 @@ def red_category_dashboard(category="Electronics"):
     fig, axes = plt.subplots(2, 2, figsize=(14, 10))
     fig.suptitle(f'{category} Dashboard', fontsize=16, fontweight='bold')
 
+    # 左上：月營收趨勢
     monthly_rev = cat_df.groupby('month')['amount'].sum()
     monthly_rev.index = monthly_rev.index.to_timestamp()
     axes[0, 0].plot(monthly_rev.index, monthly_rev.values, marker='o')
@@ -173,12 +173,14 @@ def red_category_dashboard(category="Electronics"):
     axes[0, 0].set_xlabel('Month')
     axes[0, 0].set_ylabel('Revenue')
 
+    # 右上：各地區營收
     region_rev = cat_df.groupby('region')['amount'].sum().sort_values(ascending=False)
     axes[0, 1].bar(region_rev.index, region_rev.values)
     axes[0, 1].set_title('Revenue by Region')
     axes[0, 1].set_xlabel('Region')
     axes[0, 1].set_ylabel('Revenue')
 
+    # 左下：Top 5 商品水平長條圖
     top5 = (
         cat_df.groupby('product_name')['amount']
         .sum()
@@ -190,6 +192,7 @@ def red_category_dashboard(category="Electronics"):
     axes[1, 0].set_xlabel('Revenue')
     axes[1, 0].set_ylabel('Product')
 
+    # 右下：訂單金額分佈
     axes[1, 1].hist(cat_df['amount'], bins=20, edgecolor='white')
     axes[1, 1].set_title('Order Amount Distribution')
     axes[1, 1].set_xlabel('Amount')

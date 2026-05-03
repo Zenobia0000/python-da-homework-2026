@@ -13,6 +13,9 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
+def _load_enriched():
+    return pd.read_csv("datasets/ecommerce/orders_enriched.csv",
+                       parse_dates=["order_date"])
 
 # ============================================================
 # 🟢 送分題（每題 10 分，共 30 分）
@@ -40,7 +43,6 @@ def green_plotly_bar():
         labels={'amount': 'Revenue', 'category': 'Category'}
     )
     return fig
-
 
 def green_plotly_line():
     """
@@ -108,11 +110,9 @@ def yellow_clean_and_merge(raw_path, customers_path, products_path):
     )
 
     df['order_date'] = pd.to_datetime(df['order_date'], errors='coerce')
-
     df = df.dropna(subset=['amount', 'order_date'])
     df = df.drop_duplicates()
 
-        
     df = pd.merge(df, customers, on='customer_id', how='left')
     df = pd.merge(df, products, on='product_id', how='left')
 
@@ -182,82 +182,81 @@ def red_dashboard():
     提示：from plotly.subplots import make_subplots
     """
     # TODO: 你的程式碼
-    def red_dashboard():
-        
-        df = Yellow.yellow_clean_and_merge(
+    df = yellow_clean_and_merge(
         "datasets/ecommerce/orders_raw.csv",
         "datasets/ecommerce/customers.csv",
         "datasets/ecommerce/products.csv"
-        )
+    )
 
-        df['month'] = df['order_date'].dt.to_period('M').dt.to_timestamp()
-        monthly = df.groupby('month')['amount'].sum().reset_index()
+    # 預計算各子圖資料
+    df['month'] = df['order_date'].dt.to_period('M').dt.to_timestamp()
+    monthly = df.groupby('month')['amount'].sum().reset_index()
 
-        top10 = (
-            df.groupby('product_name')['amount']
-            .sum()
-            .sort_values(ascending=False)
-            .head(10)
-            .reset_index()
-        )
+    top10 = (
+        df.groupby('product_name')['amount']
+        .sum()
+        .sort_values(ascending=False)
+        .head(10)
+        .reset_index()
+    )
 
-        region_rev = (
-            df.groupby('region')['amount']
-            .sum()
-            .sort_values(ascending=False)
-            .reset_index()
-        )
+    region_rev = (
+        df.groupby('region')['amount']
+        .sum()
+        .sort_values(ascending=False)
+        .reset_index()
+    )
 
-        
-        cat_rev = df.groupby('category')['amount'].sum().reset_index()
+    cat_rev = df.groupby('category')['amount'].sum().reset_index()
 
-        fig = make_subplots(
-            rows=2, cols=2,
-            subplot_titles=(
+    # 建立 2×2 subplots
+    fig = make_subplots(
+        rows=2, cols=2,
+        subplot_titles=(
             'Monthly Revenue Trend',
             'Top 10 Products by Revenue',
             'Revenue by Region',
             'Revenue Share by Category'
-            ),
-            specs=[
-                [{"type": "xy"},  {"type": "xy"}],
-                [{"type": "xy"},  {"type": "domain"}]   
-            ]
-        )
+        ),
+        specs=[
+            [{"type": "xy"},     {"type": "xy"}],
+            [{"type": "xy"},     {"type": "domain"}]
+        ]
+    )
 
-        fig.add_trace(
-            go.Scatter(x=monthly['month'], y=monthly['amount'],
-                    mode='lines+markers', name='Monthly Revenue'),
-            row=1, col=1
-        )
+    # 左上：折線圖
+    fig.add_trace(
+        go.Scatter(x=monthly['month'], y=monthly['amount'],
+                   mode='lines+markers', name='Monthly Revenue'),
+        row=1, col=1
+    )
 
-        fig.add_trace(
-            go.Bar(
-                x=top10['amount'],
-                y=top10['product_name'],
-                orientation='h',
-                name='Product Revenue'
-            ),
-            row=1, col=2
-        )
+    # 右上：水平長條圖 Top 10
+    fig.add_trace(
+        go.Bar(x=top10['amount'], y=top10['product_name'],
+               orientation='h', name='Product Revenue'),
+        row=1, col=2
+    )
 
-        fig.add_trace(
-            go.Bar(x=region_rev['region'], y=region_rev['amount'],
-                name='Region Revenue'),
-            row=2, col=1
-        )
+    # 左下：地區營收長條圖
+    fig.add_trace(
+        go.Bar(x=region_rev['region'], y=region_rev['amount'],
+               name='Region Revenue'),
+        row=2, col=1
+    )
 
-        fig.add_trace(
-            go.Pie(labels=cat_rev['category'], values=cat_rev['amount'],
-                hole=0.4, name='Category Share'),
-            row=2, col=2
-        )
+    # 右下：類別佔比甜甜圈圖
+    fig.add_trace(
+        go.Pie(labels=cat_rev['category'], values=cat_rev['amount'],
+               hole=0.4, name='Category Share'),
+        row=2, col=2
+    )
 
-        fig.update_layout(
-            title_text='E-Commerce Interactive Dashboard',
-            title_font_size=20,
-            height=800,
-            showlegend=False
-        )
+    fig.update_layout(
+        title_text='E-Commerce Interactive Dashboard',
+        title_font_size=20,
+        height=800,
+        showlegend=False
+    )
 
     return fig
