@@ -26,7 +26,17 @@ def green_plotly_bar():
     提示：px.bar()
     """
     # TODO: 你的程式碼
-    pass
+    df = pd.read_csv('../datasets/ecommerce/orders_enriched.csv',
+    parse_dates=['order_date'],)
+
+    category_sum = df.groupby('category', as_index=False)['amount'].sum().sort_values('amount', ascending=False)
+
+    fig = px.bar(category_sum, x='category', y='amount', text='amount', color='category', title='Revenue by product category')
+
+    fig.update_traces(texttemplate='%{text:,.0f}', textposition='outside')
+    
+    fig.update_layout(height=400, showlegend=False)
+    return fig
 
 
 def green_plotly_line():
@@ -37,7 +47,17 @@ def green_plotly_line():
     提示：先 groupby 月份算總營收，再 px.line()
     """
     # TODO: 你的程式碼
-    pass
+    df = pd.read_csv('../datasets/ecommerce/orders_enriched.csv',
+    parse_dates=['order_date'],)
+    df['month'] = df['order_date'].dt.strftime('%Y-%m')
+    monthly_revenue = df.groupby('month', as_index=False)['amount'].sum().sort_values('month')
+
+    fig = px.line(monthly_revenue, x='month', y='amount', text='amount', title='Revenue by monthly')
+    fig.update_xaxes(type='category')
+    fig.update_traces(texttemplate='%{text:,.0f}', textposition='top center')
+    return fig
+
+
 
 
 def green_plotly_pie():
@@ -48,7 +68,10 @@ def green_plotly_pie():
     提示：px.pie()
     """
     # TODO: 你的程式碼
-    pass
+    df = pd.read_csv('../datasets/ecommerce/orders_enriched.csv',
+    parse_dates=['order_date'],)
+    vip_orders = df.groupby('vip_level', as_index=False)['order_id'].count()
+    fig = px.pie(vip_orders,name='vip_level',values='order_id')
 
 
 # ============================================================
