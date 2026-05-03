@@ -19,8 +19,9 @@ def green_read_csv():
     讀取 orders_raw.csv，回傳原始 DataFrame（不做任何清理）
     提示：pd.read_csv()
     """
-    # TODO: 你的程式碼
-    pass
+    DATA = '../datasets/ecommerce/orders_raw.csv'
+    df = pd.read_csv(DATA)
+    return df
 
 
 def green_shape(df):
@@ -28,8 +29,7 @@ def green_shape(df):
     回傳 DataFrame 的 (列數, 欄數) tuple
     提示：df.shape
     """
-    # TODO: 你的程式碼
-    pass
+    return df.shape
 
 
 def green_dtypes(df):
@@ -37,8 +37,7 @@ def green_dtypes(df):
     回傳 DataFrame 的欄位型別 (Series)
     提示：df.dtypes
     """
-    # TODO: 你的程式碼
-    pass
+    return df.dtypes
 
 
 # ============================================================
@@ -51,8 +50,9 @@ def yellow_clean_columns(df):
     回傳清理後的 DataFrame（不要修改原始 df）
     提示：df.columns.str.strip().str.lower()
     """
-    # TODO: 你的程式碼
-    pass
+    df2 = df.copy()
+    df2.columns = df2.columns.str.strip().str.lower()
+    return df2
 
 
 def yellow_clean_amount(df):
@@ -62,8 +62,9 @@ def yellow_clean_amount(df):
     回傳清理後的 DataFrame（不要修改原始 df）
     提示：.str.replace() + .astype(float)
     """
-    # TODO: 你的程式碼
-    pass
+    df2 = df.copy()
+    df2['amount'] = df2['amount'].astype(str).str.replace('$','', regex=False).str.replace(',','', regex=False).astype(float)
+    return df2
 
 
 def yellow_drop_duplicates(df):
@@ -71,8 +72,8 @@ def yellow_drop_duplicates(df):
     移除完全重複的列，回傳去重後的 DataFrame
     提示：df.drop_duplicates()
     """
-    # TODO: 你的程式碼
-    pass
+    df = df.drop_duplicates()
+    return df
 
 
 # ============================================================
@@ -92,5 +93,10 @@ def red_clean_orders(path):
     回傳：清理後的 DataFrame
     提示：pd.to_datetime(errors='coerce')
     """
-    # TODO: 你的程式碼
-    pass
+    df = pd.read_csv(path)
+    df.columns = df.columns.str.strip().str.lower()
+    df['amount'] = df['amount'].astype(str).replace('$','',regex=False).replace(',','',regex=False).astype(float)
+    df['order_date'] = pd.to_datetime(df['order_date'], errors='coerce')
+    df = df.dropna(subset=['order_date','amount']) # 只要這兩個欄位中任一個有缺失值，該列就會被剔除。
+    df = df.drop_duplicates()
+    return df.shape[0]
