@@ -25,8 +25,7 @@ def green_plotly_bar():
     回傳 plotly Figure 物件
     提示：px.bar()
     """
-    df = pd.read_csv('../datasets/ecommerce/orders_enriched.csv',
-    parse_dates=['order_date'],)
+    df = pd.read_csv('datasets/ecommerce/orders_enriched.csv')
 
     category_sum = df.groupby('category', as_index=False)['amount'].sum().sort_values('amount', ascending=False)
 
@@ -45,8 +44,8 @@ def green_plotly_line():
     回傳 plotly Figure 物件
     提示：先 groupby 月份算總營收，再 px.line()
     """
-    df = pd.read_csv('../datasets/ecommerce/orders_enriched.csv',
-    parse_dates=['order_date'],)
+    df = pd.read_csv('datasets/ecommerce/orders_enriched.csv',
+    parse_dates=['order_date'])
     df['month'] = df['order_date'].dt.strftime('%Y-%m')
     monthly_revenue = df.groupby('month', as_index=False)['amount'].sum().sort_values('month')
 
@@ -63,8 +62,8 @@ def green_plotly_pie():
     回傳 plotly Figure 物件
     提示：px.pie()
     """
-    df = pd.read_csv('../datasets/ecommerce/orders_enriched.csv',
-    parse_dates=['order_date'],)
+    df = pd.read_csv('datasets/ecommerce/orders_enriched.csv',
+    parse_dates=['order_date'])
     vip_orders = df.groupby('vip_level', as_index=False)['order_id'].count()
     fig = px.pie(vip_orders,names='vip_level',values='order_id',hole=0.2,title='Percentage of orders by VIP tier')
     fig.update_traces(textinfo='percent+label')

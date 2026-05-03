@@ -57,7 +57,7 @@ def green_hist_amount():
     """
     df = _load_data()
     fig = plt.figure(figsize=(9,4))
-    sns.histplot(data=df, x='amount', bins=20, kde=True, color='steeblue')
+    sns.histplot(data=df, x='amount', bins=30, kde=True, color='steelblue')
     plt.title('Order Amount Distribution', fontweight='bold')
     plt.xlabel('Amount')
     plt.ylabel('Frequency')
@@ -98,6 +98,7 @@ def yellow_line_region_trend():
     提示：分別 groupby 再 plot，或用 sns.lineplot(hue='region')
     """
     df = _load_data()
+    df["month"] = df["order_date"].dt.to_period("M").astype(str)
     ns_df = df[df['region'].isin(['North','South'])]
     month_sn = (
         ns_df.groupby(['month','region'])['amount'].sum().reset_index()
@@ -136,7 +137,7 @@ def yellow_scatter_price_amount():
     """
     df = _load_data()
     fig = plt.figure(figsize=(8, 5))
-    sns.scatterplot(data=df, x='unit_price', y='amount', alpha=0.6, color='gold')
+    sns.scatterplot(data=df, x='unit_price', y='amount', alpha=0.5)
     plt.title('Relationship between Unit Price and Order Amount', fontweight='bold')
     plt.xlabel('Unit Price')
     plt.ylabel('Amount')
@@ -160,6 +161,7 @@ def red_category_dashboard(category="Electronics"):
     提示：fig, axes = plt.subplots(2, 2, figsize=(14, 10))
     """
     df = _load_data()
+    df["month"] = df["order_date"].dt.to_period("M").astype(str)
     target_df = df[df['category'] == category].copy()
     monthly = (target_df.groupby('month')['amount'].sum().reset_index())
     region = (target_df.groupby('region')['amount'].sum().sort_values(ascending=False).reset_index())

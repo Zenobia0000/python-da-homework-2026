@@ -23,12 +23,15 @@ def green_load_and_merge():
     - 再 LEFT JOIN products.csv ON product_id
     提示：pd.merge(how='left')
     """
-    DATA="../datasets/ecommerce/"
-    orders = pd.read_csv(f'{DATA}/orders_clean.csv', parse_dates=['order_date'])
-    customers = pd.read_csv(f'{DATA}/customers.csv')
-    products  = pd.read_csv(f'{DATA}/products.csv')
-
-    return orders
+    orders = pd.read_csv('datasets/ecommerce/orders_clean.csv')
+    customers = pd.read_csv('datasets/ecommerce/customers.csv')
+    products  = pd.read_csv('datasets/ecommerce/products.csv')
+    df=(
+        orders
+        .merge(customers,on='customer_id',how='left')
+        .merge(products,on='product_id',how='left')
+    )
+    return df
 
 
 def green_row_count(df):
@@ -62,7 +65,7 @@ def yellow_gold_vip_stats(df):
     """
     gold_mask = df[df['vip_level'] == 'Gold']
     gold = gold_mask['amount'].agg(['count', 'sum'])
-    return f'訂單數: {int(gold['count'])}', f'總金額:{float(gold['sum'])}'
+    return (int(gold['count']), float(gold['sum']))
 
 def yellow_region_avg_amount(df):
     """
@@ -70,8 +73,7 @@ def yellow_region_avg_amount(df):
     回傳 Series（index=region, values=平均金額）
     提示：groupby('region')['amount'].mean()
     """
-    region_avg_amount = df.groupy('region')['amount'].mean().round(1)
-    return region_avg_amount
+    return df.groupby('region')['amount'].mean()
 
 
 # ============================================================
@@ -95,10 +97,11 @@ def red_rfm_top5(df):
     提示：groupby('customer_id').agg(...)
     """
     # TODO: 你的程式碼
-    rfm = df.groupby('customer_id','customer_name').agg(
+    rfm = df.groupby('customer_id').agg(
         R=('order_date', 'max'),
         F=('order_id', 'count'),
-        M=('amount', 'sum')
+        M=('amount', 'sum'),
+        customer_name=("customer_name", "first")
     ).reset_index()
     result = rfm.sort_values('M',ascending=False).head()
-    return result
+    return result[["customer_id", "customer_name", "R", "F", "M"]]

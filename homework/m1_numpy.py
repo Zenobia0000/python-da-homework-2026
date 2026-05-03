@@ -19,7 +19,7 @@ import numpy as np
 def green_mean():
     """建立 [10, 20, 30, 40, 50]，回傳所有元素的平均值 (float)"""
     arr = np.array([10,20,30,40,50])
-    return arr.mean()
+    return float(arr.mean())
 
 def green_double():
     """建立 [10, 20, 30, 40, 50]，回傳所有元素乘以 2 的 ndarray"""

@@ -19,9 +19,7 @@ def green_read_csv():
     讀取 orders_raw.csv，回傳原始 DataFrame（不做任何清理）
     提示：pd.read_csv()
     """
-    DATA = '../datasets/ecommerce/orders_raw.csv'
-    df = pd.read_csv(DATA)
-    return df
+    return pd.read_csv('datasets/ecommerce/orders_raw.csv')
 
 
 def green_shape(df):
@@ -95,8 +93,8 @@ def red_clean_orders(path):
     """
     df = pd.read_csv(path)
     df.columns = df.columns.str.strip().str.lower()
-    df['amount'] = df['amount'].astype(str).replace('$','',regex=False).replace(',','',regex=False).astype(float)
+    df['amount'] = df['amount'].astype(str).str.replace('$','',regex=False).str.replace(',','',regex=False).astype(float)
     df['order_date'] = pd.to_datetime(df['order_date'], errors='coerce')
     df = df.dropna(subset=['order_date','amount']) # 只要這兩個欄位中任一個有缺失值，該列就會被剔除。
     df = df.drop_duplicates()
-    return df.shape[0]
+    return df
