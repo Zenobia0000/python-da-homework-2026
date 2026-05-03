@@ -19,20 +19,26 @@ import numpy as np
 def green_mean():
     """建立 [10, 20, 30, 40, 50]，回傳所有元素的平均值 (float)"""
     # TODO: 你的程式碼
-    pass
+    arr = np.mean([10, 20, 30, 40, 50])
+    result = arr
+    return result
+    
 
 
 def green_double():
     """建立 [10, 20, 30, 40, 50]，回傳所有元素乘以 2 的 ndarray"""
     # TODO: 你的程式碼
-    pass
+    arr = np.array([10, 20, 30, 40, 50])
+    result = arr * 2
+    return result
 
 
 def green_filter():
     """建立 [10, 20, 30, 40, 50]，回傳大於 25 的元素 (ndarray)"""
     # TODO: 你的程式碼
-    pass
-
+    arr = np.array([10, 20, 30, 40, 50])
+    result = arr[arr > 25]
+    return result    
 
 # ============================================================
 # 🟡 核心題（每題 15 分，共 45 分）
@@ -42,7 +48,10 @@ def green_filter():
 def yellow_expensive_count(prices):
     """回傳單價 > 1000 的商品數量 (int)"""
     # TODO: 你的程式碼
-    pass
+    DATA = '../datasets/products.csv'
+    unit_price = np.genfromtxt(DATA, delimiter=',', skip_header=1, usecols=3)
+    result = len(unit_price[unit_price > 1000])
+    return (result)
 
 
 def yellow_top3_stock_indices(stocks):
@@ -51,7 +60,11 @@ def yellow_top3_stock_indices(stocks):
     提示：np.argsort
     """
     # TODO: 你的程式碼
-    pass
+    DATA = '../datasets/ecommerce/products.csv'
+    qty_stock = np.genfromtxt(DATA, delimiter=',', skip_header=1, usecols=4)
+    result = np.argsort(qty_stock)
+    top3_stock = result[::-1][:3]
+    return top3_stock
 
 
 def yellow_restock_cost(prices, stocks):
@@ -60,8 +73,13 @@ def yellow_restock_cost(prices, stocks):
     提示：布林遮罩 + .sum()
     """
     # TODO: 你的程式碼
-    pass
+    DATA = '../datasets/ecommerce/products.csv'
+    unit_price = np.genfromtxt(DATA, delimiter=',', skip_header=1, usecols=3)
+    qty_stock = np.genfromtxt(DATA, delimiter=',', skip_header=1, usecols=4)
 
+    lower_500 = unit_price[np.array(unit_price < 500)]
+    total_price = lower_500.sum()* 50
+    return total_price
 
 # ============================================================
 # 🔴 挑戰題（25 分）
@@ -77,4 +95,17 @@ def red_double11_prices(prices, stocks):
     提示：np.where 可以巢狀使用
     """
     # TODO: 你的程式碼
-    pass
+    DATA = '../datasets/ecommerce/products.csv'
+    price = np.genfromtxt(DATA, delimiter=',', skip_header=1, usecols=3)
+    stock = np.genfromtxt(DATA, delimiter=',', skip_header=1, usecols=4)
+
+    final_price = np.where(
+    stock >= 100,                       
+    price * 0.7,                        
+    np.where(
+        stock >= 20,                
+        price * 0.9,            
+        price                    
+    )
+)
+    return final_price

@@ -15,6 +15,11 @@ import pandas as pd
 # ============================================================
 # 🟢 送分題（每題 10 分，共 30 分）
 # ============================================================
+order = pd.read_csv('..\datasets\ecommerce\orders_clean.csv')
+customers = pd.read_csv('..\datasets\ecommerce\customers.csv')
+products = pd.read_csv('..\datasets\ecommerce\products.csv')
+
+
 
 def green_load_and_merge():
     """
@@ -24,19 +29,22 @@ def green_load_and_merge():
     提示：pd.merge(how='left')
     """
     # TODO: 你的程式碼
-    pass
+    oc = order.merge(customers, on = 'customer_id',how = 'left' )
+    df = oc.merge(products, on = 'product_id', how = 'left')
+    return df
 
 
 def green_row_count(df):
     """回傳 DataFrame 的列數 (int)"""
     # TODO: 你的程式碼
-    pass
-
+    count = df.shape[0]    
+    return count
 
 def green_column_list(df):
     """回傳 DataFrame 的所有欄位名稱 (list)"""
     # TODO: 你的程式碼
-    pass
+    column_names = df.columns.tolist()
+    return column_names
 
 
 # ============================================================
@@ -50,7 +58,8 @@ def yellow_top_category(df):
     提示：groupby('category')['amount'].sum()
     """
     # TODO: 你的程式碼
-    pass
+    category_rev = df.groupby('category')['amount'].sum().idxmax()
+    return category_rev
 
 
 def yellow_gold_vip_stats(df):
@@ -60,7 +69,10 @@ def yellow_gold_vip_stats(df):
     提示：df[df['vip_level'] == 'Gold']
     """
     # TODO: 你的程式碼
-    pass
+    gold_df = df[df['vip_level'] == 'Gold']
+    order_count = len(gold_df) # 數出vip是gold等級的有幾張訂單
+    gold_amount = gold_df['amount'].sum() 
+    return (int(order_count), float(gold_amount))
 
 
 def yellow_region_avg_amount(df):
@@ -70,7 +82,8 @@ def yellow_region_avg_amount(df):
     提示：groupby('region')['amount'].mean()
     """
     # TODO: 你的程式碼
-    pass
+    region_avg = df.groupby('region')['amount'].mean()
+    return region_avg
 
 
 # ============================================================
@@ -94,4 +107,14 @@ def red_rfm_top5(df):
     提示：groupby('customer_id').agg(...)
     """
     # TODO: 你的程式碼
-    pass
+    rfm = df.groupby(['customer_id', 'customer_name']).agg({
+        'order_date': 'max',
+        'order_id': 'count',
+        'amount': 'sum'
+    }).reset_index()
+    
+    rfm.columns = ['customer_id', 'customer_name', 'R', 'F', 'M']
+    
+    top5 = rfm.sort_values(by='M', ascending=False).head(5)
+    
+    return top5
