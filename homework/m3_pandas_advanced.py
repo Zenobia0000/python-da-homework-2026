@@ -97,7 +97,7 @@ def red_rfm_top5(df):
 
     提示：groupby('customer_id').agg(...)
     """
-    RFM = df.groupby("customer_id", "customer_name").agg(
+    RFM = df.groupby(["customer_id", "customer_name"]).agg(
         R = ("order_date", "max"),
         F = ("order_id", "count"),
         M = ("amount", "sum"),

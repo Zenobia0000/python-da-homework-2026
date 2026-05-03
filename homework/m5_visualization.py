@@ -111,7 +111,7 @@ def yellow_scatter_price_amount():
 
     fig, ax = plt.subplots(figsize=(8, 5))
     ax.scatter(df["unit_price"], df["amount"], alpha=0.5)
-    ax.set_xlebal("Unit Price")
+    ax.set_xlabel("Unit Price")
     ax.set_ylabel("Amount")
     return fig
 
@@ -136,7 +136,7 @@ def red_category_dashboard(category="Electronics"):
     fig, axes = plt.subplots(2, 2, figsize=(14, 10))
 
     # 左上
-    monthly = cat_df.set_index("order_date").resample("ME")["amount"]
+    monthly = cat_df.set_index("order_date").resample("ME")["amount"].sum()
     axes[0, 0].plot(monthly.index, monthly.values)
     axes[0, 0].set_title(f"{category} 月營收趨勢")
 
