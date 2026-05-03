@@ -29,7 +29,10 @@ def green_bar_category():
     提示：sns.countplot 或 value_counts().plot.bar()
     """
     # TODO: 你的程式碼
-    pass
+    df = _load_data()
+    fig, ax = plt.subplots()
+    sns.countplot(x='category', data=df, ax=ax)
+    return fig
 
 
 def green_hist_amount():
@@ -39,7 +42,10 @@ def green_hist_amount():
     提示：sns.histplot(bins=20) 或 plt.hist()
     """
     # TODO: 你的程式碼
-    pass
+    df = _load_data()
+    fig, ax = plt.subplots()
+    sns.histplot(df['amount'], bins=20, ax=ax)
+    return fig
 
 
 def green_set_labels():
@@ -51,7 +57,13 @@ def green_set_labels():
     回傳 matplotlib Figure 物件
     """
     # TODO: 你的程式碼
-    pass
+    df = _load_data()
+    fig, ax = plt.subplots()
+    df['category'].value_counts().plot(kind='bar', ax=ax)
+    ax.set_title("Order Count by Category") 
+    ax.set_xlabel("Product Category")       
+    ax.set_ylabel("Number of Orders")      
+    return fig
 
 
 # ============================================================
@@ -68,7 +80,14 @@ def yellow_line_region_trend():
     提示：分別 groupby 再 plot，或用 sns.lineplot(hue='region')
     """
     # TODO: 你的程式碼
-    pass
+    df = _load_data()
+    df['month'] = df['order_date'].dt.to_period('M').astype(str)
+    trend = df[df['region'].isin(['North', 'South'])].groupby(['month', 'region'])['amount'].sum().reset_index()
+    
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.lineplot(x='month', y='amount', hue='region', data=trend, ax=ax)
+    plt.xticks(rotation=45) 
+    return fig
 
 
 def yellow_box_vip():
@@ -78,7 +97,10 @@ def yellow_box_vip():
     提示：sns.boxplot(x='vip_level', y='amount', data=df)
     """
     # TODO: 你的程式碼
-    pass
+    df = _load_data()
+    fig, ax = plt.subplots()
+    sns.boxplot(x='vip_level', y='amount', data=df, ax=ax)
+    return fig
 
 
 def yellow_scatter_price_amount():
@@ -88,7 +110,10 @@ def yellow_scatter_price_amount():
     提示：plt.scatter() 或 sns.scatterplot()
     """
     # TODO: 你的程式碼
-    pass
+    df = _load_data()
+    fig, ax = plt.subplots()
+    sns.scatterplot(x='unit_price', y='amount', data=df, ax=ax)
+    return fig
 
 
 # ============================================================
@@ -107,4 +132,32 @@ def red_category_dashboard(category="Electronics"):
     提示：fig, axes = plt.subplots(2, 2, figsize=(14, 10))
     """
     # TODO: 你的程式碼
-    pass
+    df = _load_data()
+    target_df = df[df['category'] == category].copy()
+    target_df['month'] = target_df['order_date'].dt.to_period('M').astype(str)
+    
+    
+    fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+    fig.suptitle(f"Dashboard: {category}", fontsize=20)
+
+    
+    monthly_rev = target_df.groupby('month')['amount'].sum()
+    monthly_rev.plot(ax=axes[0, 0], marker='o')
+    axes[0, 0].set_title("Monthly Revenue Trend")
+
+    
+    region_rev = target_df.groupby('region')['amount'].sum()
+    region_rev.plot(kind='bar', ax=axes[0, 1])
+    axes[0, 1].set_title("Revenue by Region")
+
+    
+    top5 = target_df.groupby('product_name')['amount'].sum().sort_values(ascending=False).head(5)
+    top5.plot(kind='barh', ax=axes[1, 0])
+    axes[1, 0].set_title("Top 5 Products")
+
+    
+    sns.histplot(target_df['amount'], bins=15, ax=axes[1, 1])
+    axes[1, 1].set_title("Order Amount Distribution")
+
+    plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+    return fig

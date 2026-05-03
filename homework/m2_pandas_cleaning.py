@@ -9,10 +9,12 @@ M2 Pandas I/O 與資料清理 — 課後作業
 """
 import pandas as pd
 
-
 # ============================================================
 # 🟢 送分題（每題 10 分，共 30 分）
 # ============================================================
+
+DATA = '../datasets/ecommerce/orders_raw.csv'
+df = pd.read_csv(DATA)
 
 def green_read_csv():
     """
@@ -20,7 +22,7 @@ def green_read_csv():
     提示：pd.read_csv()
     """
     # TODO: 你的程式碼
-    pass
+    return df
 
 
 def green_shape(df):
@@ -29,7 +31,8 @@ def green_shape(df):
     提示：df.shape
     """
     # TODO: 你的程式碼
-    pass
+    return df.shape
+    
 
 
 def green_dtypes(df):
@@ -38,7 +41,7 @@ def green_dtypes(df):
     提示：df.dtypes
     """
     # TODO: 你的程式碼
-    pass
+    return df.dtypes
 
 
 # ============================================================
@@ -52,7 +55,9 @@ def yellow_clean_columns(df):
     提示：df.columns.str.strip().str.lower()
     """
     # TODO: 你的程式碼
-    pass
+    new_df = df.copy()
+    new_df.columns = new_df.columns.str.strip().str.lower()
+    return new_df.columns
 
 
 def yellow_clean_amount(df):
@@ -63,7 +68,15 @@ def yellow_clean_amount(df):
     提示：.str.replace() + .astype(float)
     """
     # TODO: 你的程式碼
-    pass
+    df_copy = df.copy() # 複製一份
+    df_copy['amount']=(
+        df_copy['amount']
+        .astype(str)
+        .str.replace('$', '', regex = False)
+        .str.replace(',', '', regex = False)
+        .astype(float)
+    )
+    return df_copy # 整張清理過的表
 
 
 def yellow_drop_duplicates(df):
@@ -72,7 +85,8 @@ def yellow_drop_duplicates(df):
     提示：df.drop_duplicates()
     """
     # TODO: 你的程式碼
-    pass
+    df_drop = df.drop_duplicates()
+    return df_drop
 
 
 # ============================================================
@@ -93,4 +107,23 @@ def red_clean_orders(path):
     提示：pd.to_datetime(errors='coerce')
     """
     # TODO: 你的程式碼
-    pass
+    df = pd.read_csv(path) # 1
+
+    df.columns = df.columns.str.strip().str.lower() # 2
+    
+    df['amount']=(
+        df['amount']
+        .astype(str)
+        .str.replace('$', '', regex = False)
+        .str.replace(',', '', regex = False)
+        .astype(float)
+    ) # 3
+
+    df['order_date'] = pd.to_datetime(df['order_date'], errors = 'coerce') # 4
+
+    df = df.dropna(subset = ['amount','order_date']) # 5
+
+    df_drop = df.drop_duplicates() # 6
+    df = df_drop
+    return df
+

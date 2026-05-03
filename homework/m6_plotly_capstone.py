@@ -26,7 +26,13 @@ def green_plotly_bar():
     提示：px.bar()
     """
     # TODO: 你的程式碼
-    pass
+    
+    df = pd.read_csv("datasets/ecommerce/orders_enriched.csv")
+    
+    rev_by_cat = df.groupby('category')['amount'].sum().reset_index()
+    
+    fig = px.bar(rev_by_cat, x='category', y='amount', title="Revenue by Category")
+    return fig
 
 
 def green_plotly_line():
@@ -37,7 +43,12 @@ def green_plotly_line():
     提示：先 groupby 月份算總營收，再 px.line()
     """
     # TODO: 你的程式碼
-    pass
+    df = pd.read_csv("datasets/ecommerce/orders_enriched.csv", parse_dates=["order_date"])
+    
+    monthly_rev = df.set_index('order_date').resample('ME')['amount'].sum().reset_index()
+    
+    fig = px.line(monthly_rev, x='order_date', y='amount', title="Monthly Revenue Trend")
+    return fig
 
 
 def green_plotly_pie():
@@ -48,7 +59,10 @@ def green_plotly_pie():
     提示：px.pie()
     """
     # TODO: 你的程式碼
-    pass
+    df = pd.read_csv("datasets/ecommerce/orders_enriched.csv")
+    
+    fig = px.pie(df, names='vip_level', title="VIP Order Distribution")
+    return fig
 
 
 # ============================================================
@@ -63,7 +77,15 @@ def yellow_clean_and_merge(raw_path, customers_path, products_path):
     回傳：合併後的 DataFrame
     """
     # TODO: 你的程式碼
-    pass
+    orders = pd.read_csv(raw_path, parse_dates=["order_date"])
+    orders = orders.dropna().drop_duplicates() # 去缺值與重複
+    
+    customers = pd.read_csv(customers_path)
+    products = pd.read_csv(products_path)
+    
+    df = orders.merge(customers, on='customer_id', how='left')
+    df = df.merge(products, on='product_id', how='left')
+    return df
 
 
 def yellow_kpi_summary(df):
@@ -77,7 +99,13 @@ def yellow_kpi_summary(df):
     }
     """
     # TODO: 你的程式碼
-    pass
+    kpi = {
+        "total_revenue": float(df['amount'].sum()),
+        "order_count": int(df['order_id'].nunique()),
+        "active_customers": int(df['customer_id'].nunique()),
+        "avg_order_value": float(df['amount'].sum() / df['order_id'].nunique())
+    }
+    return kpi
 
 
 def yellow_plotly_scatter(df):
@@ -91,7 +119,9 @@ def yellow_plotly_scatter(df):
     提示：px.scatter(hover_data=['product_name'])
     """
     # TODO: 你的程式碼
-    pass
+    fig = px.scatter(df, x='unit_price', y='amount', color='category',
+                     hover_data=['product_name'], title="Price vs Amount")
+    return fig
 
 
 # ============================================================
@@ -115,4 +145,31 @@ def red_dashboard():
     提示：from plotly.subplots import make_subplots
     """
     # TODO: 你的程式碼
-    pass
+    df = yellow_clean_and_merge(
+        "datasets/ecommerce/orders_raw.csv",
+        "datasets/ecommerce/customers.csv",
+        "datasets/ecommerce/products.csv"
+    )
+    
+    # 2. 準備 2x2 畫布，並設定子圖類型 (pie 圖需要特別設定 type='domain')
+    fig = make_subplots(
+        rows=2, cols=2,
+        subplot_titles=("Monthly Revenue", "Top 10 Products", "Region Revenue", "Category Share"),
+        specs=[[{"type": "xy"}, {"type": "xy"}],
+               [{"type": "xy"}, {"type": "domain"}]]
+    )
+    
+    m_rev = df.set_index('order_date').resample('ME')['amount'].sum().reset_index()
+    fig.add_trace(go.Scatter(x=m_rev['order_date'], y=m_rev['amount'], name="Revenue"), row=1, col=1)
+    
+    top10 = df.groupby('product_name')['amount'].sum().sort_values(ascending=False).head(10)
+    fig.add_trace(go.Bar(x=top10.index, y=top10.values, name="Top Products"), row=1, col=2)
+    
+    reg_rev = df.groupby('region')['amount'].sum()
+    fig.add_trace(go.Bar(x=reg_rev.index, y=reg_rev.values, name="Region"), row=2, col=1)
+    
+    cat_rev = df.groupby('category')['amount'].sum()
+    fig.add_trace(go.Pie(labels=cat_rev.index, values=cat_rev.values), row=2, col=2)
+    
+    fig.update_layout(height=800, title_text="E-commerce Executive Dashboard", showlegend=False)
+    return fig
