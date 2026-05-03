@@ -14,54 +14,41 @@ import pandas as pd
 # 🟢 送分題（每題 10 分，共 30 分）
 # ============================================================
 
-
-import numpy as np
-DATA = './datasets/ecommerce/orders_raw.csv'
 def green_read_csv():
     """
     讀取 orders_raw.csv，回傳原始 DataFrame（不做任何清理）
     提示：pd.read_csv()
     """
     # TODO: 你的程式碼
-    raw = pd.read_csv(DATA)
-    return raw
-df = green_read_csv()
-# print(df.head())
+    DATA = "/datasets/ecommerce/orders_raw.csv"
+    df = pd.read_csv(DATA)
+    return df
 
 
-import numpy as np
-DATA = './datasets/ecommerce/orders_raw.csv'
 def green_shape(df):
     """
     回傳 DataFrame 的 (列數, 欄數) tuple
     提示：df.shape
     """
     # TODO: 你的程式碼
+    
     return df.shape
-raw = pd.read_csv(DATA)
-# print(f'資料型態 =',raw.shape)
 
 
-import numpy as np
-DATA = './datasets/ecommerce/orders_raw.csv'
 def green_dtypes(df):
     """
     回傳 DataFrame 的欄位型別 (Series)
     提示：df.dtypes
     """
     # TODO: 你的程式碼
+
     return df.dtypes
-raw = pd.read_csv(DATA)
-# print(f'資料型態 =',raw.dtypes)
 
 
 # ============================================================
 # 🟡 核心題（每題 15 分，共 45 分）
 # ============================================================
 
-
-import numpy as np
-DATA = './datasets/ecommerce/orders_raw.csv'
 def yellow_clean_columns(df):
     """
     清理欄位名稱：去除前後空白、全部轉小寫
@@ -69,16 +56,11 @@ def yellow_clean_columns(df):
     提示：df.columns.str.strip().str.lower()
     """
     # TODO: 你的程式碼
-    new_df = df.copy()
-    new_df.columns = new_df.columns.str.strip().str.lower()
-    return new_df
-df = pd.read_csv('./datasets/ecommerce/orders_raw.csv')
-df = yellow_clean_columns(df)
-# print('清理後欄名：',list(df.columns))
+
+    df.columns = df.columns.str.strip().str.lower()
+    return df
 
 
-import numpy as np
-DATA = './datasets/ecommerce/orders_raw.csv'
 def yellow_clean_amount(df):
     """
     清理 amount 欄位：移除 '$' 和 ',' 符號，轉為 float
@@ -87,31 +69,23 @@ def yellow_clean_amount(df):
     提示：.str.replace() + .astype(float)
     """
     # TODO: 你的程式碼
-    new_df = df.copy()
-    new_df['amount'] = (
-        new_df['amount']
-        .astype(str)
-        .str.replace('$','', regex=False)
-        .str.replace(',','', regex=False)
-        .astype(float)
-    )
-    return new_df
-df = yellow_clean_amount(df)
-# print('\n清理後 amount 型別:', df['amount'].dtype)
+    arr = (df['amount']
+                .astype(str)
+                .str.replace('$', '', regex=False)
+                .str.replace(',', '', regex=False)
+                .astype(float))
+    return arr
 
-import numpy as np
-DATA = './datasets/ecommerce/orders_raw.csv'
+
 def yellow_drop_duplicates(df):
     """
     移除完全重複的列，回傳去重後的 DataFrame
     提示：df.drop_duplicates()
     """
     # TODO: 你的程式碼
-    # print('重複列數:',df.duplicated().sum())
-    df = df.drop_duplicates()
-    # print('去重後形狀:',df.shape)
-    return df.drop_duplicates().copy()
-df = yellow_drop_duplicates(df)
+
+    arr = df.drop_duplicates()
+    return arr
 
 
 # ============================================================
@@ -132,4 +106,16 @@ def red_clean_orders(path):
     提示：pd.to_datetime(errors='coerce')
     """
     # TODO: 你的程式碼
-    pass
+
+    df = pd.read_csv(path)
+    df.columns = df.columns.str.strip().str.lower()
+    df["amount"] = (df['amount']
+                .astype(str)
+                .str.replace('$', '', regex=False)
+                .str.replace(',', '', regex=False)
+                .astype(float))
+    df["order_date"] = pd.to_datetime(df['order_date'], errors='coerce')
+    df = df.dropna(subset=['order_date'])
+    df['qty'] = df['qty'].fillna(df['qty'].median())
+    df = df.drop_duplicates()
+    return df
