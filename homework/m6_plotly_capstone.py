@@ -13,6 +13,9 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
+def _load_enriched():
+    return pd.read_csv("datasets/ecommerce/orders_enriched.csv",
+                       parse_dates=["order_date"])
 
 # ============================================================
 # 🟢 送分題（每題 10 分，共 30 分）
@@ -26,8 +29,20 @@ def green_plotly_bar():
     提示：px.bar()
     """
     # TODO: 你的程式碼
-    pass
-
+    df = _load_enriched()
+    category_rev = (
+        df.groupby('category')['amount']
+        .sum()
+        .reset_index()
+        .sort_values('amount', ascending=False)
+    )
+    fig = px.bar(
+        category_rev,
+        x='category', y='amount',
+        title='Total Revenue by Category',
+        labels={'amount': 'Revenue', 'category': 'Category'}
+    )
+    return fig
 
 def green_plotly_line():
     """
@@ -37,7 +52,17 @@ def green_plotly_line():
     提示：先 groupby 月份算總營收，再 px.line()
     """
     # TODO: 你的程式碼
-    pass
+    df = _load_enriched()
+    df['month'] = df['order_date'].dt.to_period('M').dt.to_timestamp()
+    monthly = df.groupby('month')['amount'].sum().reset_index()
+    fig = px.line(
+        monthly,
+        x='month', y='amount',
+        title='Monthly Revenue Trend',
+        labels={'month': 'Month', 'amount': 'Revenue'},
+        markers=True
+    )
+    return fig
 
 
 def green_plotly_pie():
@@ -48,7 +73,15 @@ def green_plotly_pie():
     提示：px.pie()
     """
     # TODO: 你的程式碼
-    pass
+    df = _load_enriched()
+    vip_counts = df['vip_level'].value_counts().reset_index()
+    vip_counts.columns = ['vip_level', 'count']
+    fig = px.pie(
+        vip_counts,
+        names='vip_level', values='count',
+        title='Order Share by VIP Level'
+    )
+    return fig
 
 
 # ============================================================
@@ -63,7 +96,27 @@ def yellow_clean_and_merge(raw_path, customers_path, products_path):
     回傳：合併後的 DataFrame
     """
     # TODO: 你的程式碼
-    pass
+    df = pd.read_csv(raw_path)
+    customers = pd.read_csv(customers_path)
+    products = pd.read_csv(products_path)
+
+    df.columns = df.columns.str.strip().str.lower()
+
+    df['amount'] = (
+        df['amount']
+        .str.replace('$', '', regex=False)
+        .str.replace(',', '', regex=False)
+        .astype(float)
+    )
+
+    df['order_date'] = pd.to_datetime(df['order_date'], errors='coerce')
+    df = df.dropna(subset=['amount', 'order_date'])
+    df = df.drop_duplicates()
+
+    df = pd.merge(df, customers, on='customer_id', how='left')
+    df = pd.merge(df, products, on='product_id', how='left')
+
+    return df
 
 
 def yellow_kpi_summary(df):
@@ -77,7 +130,12 @@ def yellow_kpi_summary(df):
     }
     """
     # TODO: 你的程式碼
-    pass
+    return {
+        "total_revenue":    float(df['amount'].sum()),
+        "order_count":      int(len(df)),
+        "active_customers": int(df['customer_id'].nunique()),
+        "avg_order_value":  float(df['amount'].mean()),
+    }
 
 
 def yellow_plotly_scatter(df):
@@ -91,7 +149,16 @@ def yellow_plotly_scatter(df):
     提示：px.scatter(hover_data=['product_name'])
     """
     # TODO: 你的程式碼
-    pass
+    fig = px.scatter(
+        df,
+        x='unit_price', y='amount',
+        color='category',
+        hover_data=['product_name'],
+        title='Unit Price vs Order Amount',
+        labels={'unit_price': 'Unit Price', 'amount': 'Order Amount'},
+        opacity=0.6
+    )
+    return fig
 
 
 # ============================================================
@@ -105,14 +172,91 @@ def red_dashboard():
     流程：
     1. 清理 orders_raw.csv + 合併三張表
     2. 建立 2×2 subplot dashboard（用 plotly make_subplots）：
-       - 左上：月營收趨勢 (line)
-       - 右上：Top 10 商品營收 (bar)
-       - 左下：各地區營收 (bar)
-       - 右下：類別營收佔比 (pie/donut)
+    - 左上：月營收趨勢 (line)
+    - 右上：Top 10 商品營收 (bar)
+    - 左下：各地區營收 (bar)
+    - 右下：類別營收佔比 (pie/donut)
     3. 設定整體標題
 
     回傳 plotly Figure 物件
     提示：from plotly.subplots import make_subplots
     """
     # TODO: 你的程式碼
-    pass
+    df = yellow_clean_and_merge(
+        "datasets/ecommerce/orders_raw.csv",
+        "datasets/ecommerce/customers.csv",
+        "datasets/ecommerce/products.csv"
+    )
+
+    # 預計算各子圖資料
+    df['month'] = df['order_date'].dt.to_period('M').dt.to_timestamp()
+    monthly = df.groupby('month')['amount'].sum().reset_index()
+
+    top10 = (
+        df.groupby('product_name')['amount']
+        .sum()
+        .sort_values(ascending=False)
+        .head(10)
+        .reset_index()
+    )
+
+    region_rev = (
+        df.groupby('region')['amount']
+        .sum()
+        .sort_values(ascending=False)
+        .reset_index()
+    )
+
+    cat_rev = df.groupby('category')['amount'].sum().reset_index()
+
+    # 建立 2×2 subplots
+    fig = make_subplots(
+        rows=2, cols=2,
+        subplot_titles=(
+            'Monthly Revenue Trend',
+            'Top 10 Products by Revenue',
+            'Revenue by Region',
+            'Revenue Share by Category'
+        ),
+        specs=[
+            [{"type": "xy"},     {"type": "xy"}],
+            [{"type": "xy"},     {"type": "domain"}]
+        ]
+    )
+
+    # 左上：折線圖
+    fig.add_trace(
+        go.Scatter(x=monthly['month'], y=monthly['amount'],
+                   mode='lines+markers', name='Monthly Revenue'),
+        row=1, col=1
+    )
+
+    # 右上：水平長條圖 Top 10
+    fig.add_trace(
+        go.Bar(x=top10['amount'], y=top10['product_name'],
+               orientation='h', name='Product Revenue'),
+        row=1, col=2
+    )
+
+    # 左下：地區營收長條圖
+    fig.add_trace(
+        go.Bar(x=region_rev['region'], y=region_rev['amount'],
+               name='Region Revenue'),
+        row=2, col=1
+    )
+
+    # 右下：類別佔比甜甜圈圖
+    fig.add_trace(
+        go.Pie(labels=cat_rev['category'], values=cat_rev['amount'],
+               hole=0.4, name='Category Share'),
+        row=2, col=2
+    )
+
+    fig.update_layout(
+        title_text='E-Commerce Interactive Dashboard',
+        title_font_size=20,
+        height=800,
+        showlegend=False
+    )
+
+    return fig

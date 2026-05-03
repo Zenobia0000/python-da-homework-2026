@@ -24,19 +24,25 @@ def green_load_and_merge():
     提示：pd.merge(how='left')
     """
     # TODO: 你的程式碼
-    pass
+    orders = pd.read_csv('datasets/ecommerce/orders_clean.csv')
+    customers = pd.read_csv('datasets/ecommerce/customers.csv')
+    products = pd.read_csv('datasets/ecommerce/products.csv')
+        
+    df = pd.merge(orders, customers, on='customer_id', how='left')
+    df = pd.merge(df, products, on='product_id', how='left')
+    return df
 
 
 def green_row_count(df):
     """回傳 DataFrame 的列數 (int)"""
     # TODO: 你的程式碼
-    pass
+    return len(df)
 
 
 def green_column_list(df):
     """回傳 DataFrame 的所有欄位名稱 (list)"""
     # TODO: 你的程式碼
-    pass
+    return df.columns.tolist()
 
 
 # ============================================================
@@ -50,7 +56,7 @@ def yellow_top_category(df):
     提示：groupby('category')['amount'].sum()
     """
     # TODO: 你的程式碼
-    pass
+    return df.groupby('category')['amount'].sum().idxmax()
 
 
 def yellow_gold_vip_stats(df):
@@ -60,7 +66,8 @@ def yellow_gold_vip_stats(df):
     提示：df[df['vip_level'] == 'Gold']
     """
     # TODO: 你的程式碼
-    pass
+    gold = df[df['vip_level'] == 'Gold']
+    return (int(len(gold)), float(gold['amount'].sum()))
 
 
 def yellow_region_avg_amount(df):
@@ -70,7 +77,7 @@ def yellow_region_avg_amount(df):
     提示：groupby('region')['amount'].mean()
     """
     # TODO: 你的程式碼
-    pass
+    return df.groupby('region')['amount'].mean()
 
 
 # ============================================================
@@ -94,4 +101,22 @@ def red_rfm_top5(df):
     提示：groupby('customer_id').agg(...)
     """
     # TODO: 你的程式碼
-    pass
+    df['order_date'] = pd.to_datetime(df['order_date'])
+        
+    rfm = (
+        df.groupby('customer_id')
+        .agg(
+            R=('order_date', 'max'),
+            F=('order_date', 'count'),
+            M=('amount', 'sum'),
+            customer_name=('customer_name', 'first')
+        )
+        .reset_index()
+    )
+
+    return (
+        rfm[['customer_id', 'customer_name', 'R', 'F', 'M']]
+        .sort_values('M', ascending=False)
+        .head(5)
+        .reset_index(drop=True)
+    )
