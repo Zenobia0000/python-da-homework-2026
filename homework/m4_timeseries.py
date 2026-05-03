@@ -27,7 +27,7 @@ def green_avg_by_month():
     提示：df['order_date'].dt.month
     """
     # TODO: 你的程式碼
-    df = _load_data
+    df = _load_data()
     df['order_date'] = pd.to_datetime(df['order_date'])
     mon = df.groupby(df['order_date'].dt.month)['amount'].mean()
     return mon
@@ -40,7 +40,7 @@ def green_top3_dates():
     提示：value_counts().head(3)
     """
     # TODO: 你的程式碼
-    df = _load_data
+    df = _load_data()
     df['order_date'] = pd.to_datetime(df['order_date'])
     # 可能會把不同時間當成不同日期，所以要把時拿掉留下日就好
     df['order_date'] = pd.to_datetime(df['order_date']).dt.date
