@@ -29,8 +29,8 @@ def green_avg_by_month(df):
     回傳 Series（index=月份 1~12, values=平均金額）
     提示：df['order_date'].dt.month
     """
-    df['order_date'] = pd.to_datetime(df['order_date'])
-    return df.groupby(df['order_date'].dt.month)['amount'].mean()
+    df['month'] = df['order_date'].dt.month
+    return df.groupby('month')['amount'].mean()
   
 
 def green_top3_dates(df):
@@ -39,8 +39,8 @@ def green_top3_dates(df):
     回傳 Series（index=日期, values=訂單數, 由多到少排序）
     提示：value_counts().head(3)
     """
-    df['order_date'] = pd.to_datetime(df['order_date'])
-    return df['order_date'].value_counts().head(3)
+
+    return df['order_date'].dt.date.value_counts().head(3)
 
 
 def green_date_range():
