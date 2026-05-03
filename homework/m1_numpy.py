@@ -41,7 +41,7 @@ def green_filter():
 # 🟡 核心題（每題 15 分，共 45 分）
 # 以下函式會接收從 products.csv 讀出的 prices, stocks 陣列
 # ============================================================
-DATA = '../datasets/ecommerce/products.csv'
+DATA = 'datasets/ecommerce/products.csv'
 stocks = np.genfromtxt(DATA, delimiter=',', skip_header=1, usecols=4)
 prices = np.genfromtxt(DATA, delimiter=',', skip_header=1, usecols=3)
 
@@ -73,7 +73,7 @@ def yellow_restock_cost(prices, stocks):
 # ============================================================
 # 🔴 挑戰題（25 分）
 # ============================================================
-DATA = '../datasets/ecommerce/products.csv'
+DATA = 'datasets/ecommerce/products.csv'
 stocks = np.genfromtxt(DATA, delimiter=',', skip_header=1, usecols=4)
 prices = np.genfromtxt(DATA, delimiter=',', skip_header=1, usecols=3)
 

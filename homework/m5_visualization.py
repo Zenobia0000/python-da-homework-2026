@@ -14,7 +14,7 @@ import seaborn as sns
 
 def _load_data():
     """輔助函式：讀取資料"""
-    return pd.read_csv("../datasets/ecommerce/orders_enriched.csv",parse_dates=["order_date"])
+    return pd.read_csv("datasets/ecommerce/orders_enriched.csv",parse_dates=["order_date"])
 
 
 # ============================================================

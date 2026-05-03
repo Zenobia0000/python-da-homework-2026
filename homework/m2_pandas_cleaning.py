@@ -13,7 +13,7 @@ import pandas as pd
 # ============================================================
 # 🟢 送分題（每題 10 分，共 30 分）
 # ============================================================
-DATA = '../datasets/ecommerce/orders_raw.csv'
+DATA = 'datasets/ecommerce/orders_raw.csv'
 
 
 def green_read_csv():

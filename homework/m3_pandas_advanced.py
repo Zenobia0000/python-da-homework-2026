@@ -24,9 +24,9 @@ def green_load_and_merge():
     提示：pd.merge(how='left')
     """
     # TODO: 你的程式碼
-    orders = pd.read_csv("../datasets/ecommerce/orders_clean.csv")
-    customers = pd.read_csv("../datasets/ecommerce/customers.csv")
-    products = pd.read_csv("../datasets/ecommerce/products.csv")
+    orders = pd.read_csv("datasets/ecommerce/orders_clean.csv")
+    customers = pd.read_csv("datasets/ecommerce/customers.csv")
+    products = pd.read_csv("datasets/ecommerce/products.csv")
     df = orders.merge(customers, on="customer_id", how="left")
     df = df.merge(products, on="product_id", how="left")
     return df
