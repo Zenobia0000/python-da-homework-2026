@@ -88,7 +88,7 @@ def yellow_clean_and_merge(raw_path, customers_path, products_path):
     回傳：合併後的 DataFrame
     """
     # TODO: 你的程式碼
-    pass
+    
 
 
 def yellow_kpi_summary(df):
