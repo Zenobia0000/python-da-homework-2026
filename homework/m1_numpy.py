@@ -46,11 +46,8 @@ def green_filter():
 def yellow_expensive_count(prices):
     """回傳單價 > 1000 的商品數量 (int)"""
     # TODO: 你的程式碼
-    DATA = '../datasets/products.csv'
-    unit_price = np.genfromtxt(DATA, delimiter=',', skip_header=1, usecols=3)
-    result = len(unit_price[unit_price > 1000])
-    return (result)
-
+    return (prices > 1000).sum()
+ 
 
 def yellow_top3_stock_indices(stocks):
     """
@@ -58,12 +55,7 @@ def yellow_top3_stock_indices(stocks):
     提示：np.argsort
     """
     # TODO: 你的程式碼
-    DATA = '../datasets/ecommerce/products.csv'
-    qty_stock = np.genfromtxt(DATA, delimiter=',', skip_header=1, usecols=4)
-    result = np.argsort(qty_stock)
-    top3_stock = result[::-1][:3]
-    return top3_stock
-
+    return np.argsort(stocks)[::-1][:3]
 
 def yellow_restock_cost(prices, stocks):
     """
@@ -71,13 +63,8 @@ def yellow_restock_cost(prices, stocks):
     提示：布林遮罩 + .sum()
     """
     # TODO: 你的程式碼
-    DATA = '../datasets/ecommerce/products.csv'
-    unit_price = np.genfromtxt(DATA, delimiter=',', skip_header=1, usecols=3)
-    qty_stock = np.genfromtxt(DATA, delimiter=',', skip_header=1, usecols=4)
-
-    lower_500 = unit_price[np.array(unit_price < 500)]
-    total_price = lower_500.sum()* 50
-    return total_price
+    mask = prices < 500
+    return prices[mask].sum() * 50
 
 # ============================================================
 # 🔴 挑戰題（25 分）
@@ -93,17 +80,8 @@ def red_double11_prices(prices, stocks):
     提示：np.where 可以巢狀使用
     """
     # TODO: 你的程式碼
-    DATA = '../datasets/ecommerce/products.csv'
-    price = np.genfromtxt(DATA, delimiter=',', skip_header=1, usecols=3)
-    stock = np.genfromtxt(DATA, delimiter=',', skip_header=1, usecols=4)
-
-    final_price = np.where(
-    stock >= 100,                       
-    price * 0.7,                        
-    np.where(
-        stock >= 20,                
-        price * 0.9,            
-        price                    
+    return np.where(
+        stocks >= 100, 
+        prices * 0.7, 
+        np.where(stocks >= 20, prices * 0.9, prices)
     )
-)
-    return final_price
