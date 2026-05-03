@@ -18,6 +18,7 @@ def _load_data():
     gdf = df
     return df
 
+_load_data()
 # ============================================================
 # 🟢 送分題（每題 10 分，共 30 分）
 # ============================================================
@@ -49,7 +50,7 @@ def green_top3_dates():
     date_ord = gdf['order_date'].value_counts()
     date_ord = date_ord.rename_axis('日期')
     date_ord.name='訂單數'
-    return date_ord
+    return date_ord.head(3)
 
 
 def green_date_range():
@@ -102,7 +103,7 @@ def yellow_category_median(df:pd.DataFrame):
     """
     # TODO: 你的程式碼
     #pass
-    cat_med = df.groupby('category')['amount'].median().sort_values
+    cat_med = df.groupby('category')['amount'].median().sort_values(ascending=False)
     cat_med.name = '中位數'
     return cat_med
 
@@ -129,7 +130,7 @@ def red_monthly_report():
     ts = gdf.set_index('order_date').sort_index()
     mon_report = ts.resample('ME').agg(
             order_count=('order_id','count'),
-            active_customer=('customer_id','nunique'),
+            active_customers=('customer_id','nunique'),
             revenue=('amount','sum'),
             avg_order_value=('amount','mean')
         )
