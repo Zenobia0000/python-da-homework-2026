@@ -97,4 +97,15 @@ def red_rfm_top5(df):
 
     提示：groupby('customer_id').agg(...)
     """
+
     df["order_date"] = pd.to_datetime(df["order_date"], errors="coerce")
+    r =  df.groupby("customer_id")["order_date"].max()
+    f = df.groupby("customer_id")["order_id"].count()
+    m = df.groupby("customer_id")["amount"].sum()
+    names = df.groupby("customer_id")["customer_name"].first()
+    df2 = pd.DataFrame({"customer_name":names, "R":r, "F":f, "M":m}).reset_index()
+
+    # df2 = df.groupby("customer_id").agg(customer_name=("customer_name", "first"), R=("order_date", "max"),  F=("order_id", "count"),  M=("amount", "sum")).reset_index()
+
+    return df2.sort_values("M", ascending=False).head(5)
+
