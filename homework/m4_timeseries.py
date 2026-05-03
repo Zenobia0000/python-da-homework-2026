@@ -15,6 +15,7 @@ def _load_data():
                      parse_dates=["order_date"])
     return df
 
+df = _load_data()
 
 # ============================================================
 # 🟢 送分題（每題 10 分，共 30 分）
@@ -26,9 +27,11 @@ def green_avg_by_month():
     回傳 Series（index=月份 1~12, values=平均金額）
     提示：df['order_date'].dt.month
     """
-    # TODO: 你的程式碼
-    pass
+    df.groupby()["amount"]
+    output = pd.Series([value for value in df['order_date'].dt.month.values], index= [m for m in df['order_date'].dt.month])
+    return output
 
+print(green_avg_by_month())
 
 def green_top3_dates():
     """

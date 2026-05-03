@@ -3,3 +3,4 @@ __pycache__/
 .pytest_cache/
 .pytest_results.json
 .vscode
+.DS_Store
