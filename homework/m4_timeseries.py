@@ -40,7 +40,7 @@ def green_top3_dates(df):
     提示：value_counts().head(3)
     """
 
-    return df['order_date'].dt.date.value_counts().head(3)
+    return df['order_date'].value_counts().head(3)
 
 
 def green_date_range():
