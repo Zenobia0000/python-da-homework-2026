@@ -23,17 +23,16 @@ def green_load_and_merge():
     - 再 LEFT JOIN products.csv ON product_id
     提示：pd.merge(how='left')
     """
-    # 使用相對路徑，pytest 才能在專案根目錄執行成功
+  
     path = "datasets/ecommerce/"
     
     df_orders = pd.read_csv(path + "orders_clean.csv")
     df_customers = pd.read_csv(path + "customers.csv")
     df_products = pd.read_csv(path + "products.csv")
     
-    # 轉換訂單日期為 datetime 格式 (RFM 分析必備)
-    df_orders['order_date'] = pd.to_datetime(df_orders['order_date'])
     
-    # 進行兩次合併
+    df_orders['order_date'] = pd.to_datetime(df_orders['order_date'])
+ 
     merged_df = pd.merge(df_orders, df_customers, on='customer_id', how='left')
     final_df = pd.merge(merged_df, df_products, on='product_id', how='left')
     
