@@ -49,8 +49,8 @@ def yellow_clean_columns(df):
     提示：df.columns.str.strip().str.lower()
     """
     copy_data = df.copy()
-    clean_colums = copy_data.colums.str.strip().str.lower()
-    return clean_colums
+    copy_data.columns = copy_data.columns.str.strip().str.lower()
+    return copy_data
 
 
 def yellow_clean_amount(df):
@@ -61,8 +61,8 @@ def yellow_clean_amount(df):
     提示：.str.replace() + .astype(float)
     """
     copy_data = df.copy()
-    clean_amount = copy_data["amount"].astype(str).str.replace("$", "", regex=False).str.replace(",", "", regex=False).astype(float)
-    return clean_amount
+    copy_data["amount"] = copy_data["amount"].astype(str).str.replace("$", "", regex=False).str.replace(",", "", regex=False).astype(float)
+    return copy_data
 
 def yellow_drop_duplicates(df):
     """

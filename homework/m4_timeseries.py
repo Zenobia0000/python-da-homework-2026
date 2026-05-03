@@ -47,7 +47,7 @@ def green_date_range():
     格式為 pandas Timestamp
     """
     df = _load_data()
-    return (df["oreder_date"].min(), df["oreder_date"].max())
+    return (df["order_date"].min(), df["order_date"].max())
 
 
 # ============================================================
@@ -81,7 +81,7 @@ def yellow_category_median(df):
     回傳 Series（index=category, values=中位數）
     提示：groupby + median + sort_values
     """
-    return df.groupby("category")["amount"].median().sort_values(asending=False)
+    return df.groupby("category")["amount"].median().sort_values(ascending=False)
 
 
 # ============================================================

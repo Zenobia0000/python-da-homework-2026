@@ -53,7 +53,7 @@ def yellow_top_category(df):
     回傳該類別名稱 (str)
     提示：groupby('category')['amount'].sum()
     """
-    return df.groupby("category")["amount"].sum().idmax()
+    return df.groupby("category")["amount"].sum().idxmax()
 
 
 def yellow_gold_vip_stats(df):
@@ -97,7 +97,7 @@ def red_rfm_top5(df):
 
     提示：groupby('customer_id').agg(...)
     """
-    RFM = df.groupby('customer_id').agg(
+    RFM = df.groupby("customer_id", "customer_name").agg(
         R = ("order_date", "max"),
         F = ("order_id", "count"),
         M = ("amount", "sum"),

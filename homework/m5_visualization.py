@@ -30,8 +30,8 @@ def green_bar_category():
     """
     df = _load_data()
 
-    fig, ax = plt.subplot(figsize=(8, 5))
-    df["categroy"].value_counts().plot.bar(ax=ax)
+    fig, ax = plt.subplots(figsize=(8, 5))
+    df["category"].value_counts().plot.bar(ax=ax)
     ax.set_title("訂單數 by Category")
     return fig
 
@@ -44,7 +44,7 @@ def green_hist_amount():
     """
     df = _load_data()
 
-    fig, ax = plt.subplot(figsize=(8, 5))
+    fig, ax = plt.subplots(figsize=(8, 5))
     ax.hist(df["amount"], bins=20)
     return fig
 
@@ -80,7 +80,7 @@ def yellow_line_region_trend():
     """
     df = _load_data()
 
-    fig, ax = plt.subplot(figsize=(10, 5))
+    fig, ax = plt.subplots(figsize=(10, 5))
     for region in ["North", "South"]:
         sub = df[df["region"] == region]
         monthly = sub.set_index("order_date").resample("ME")["amount"].sum()
@@ -97,7 +97,7 @@ def yellow_box_vip():
     """
     df = _load_data()
 
-    fig, ax = plt.subplot(figsize=(8, 5))
+    fig, ax = plt.subplots(figsize=(8, 5))
     sns.boxplot(data=df, x="vip_level", y="amount", ax=ax)
     return fig
 
@@ -109,7 +109,7 @@ def yellow_scatter_price_amount():
     """
     df = _load_data()
 
-    fig, ax = plt.subplot(figsize=(8, 5))
+    fig, ax = plt.subplots(figsize=(8, 5))
     ax.scatter(df["unit_price"], df["amount"], alpha=0.5)
     ax.set_xlebal("Unit Price")
     ax.set_ylabel("Amount")
@@ -133,7 +133,7 @@ def red_category_dashboard(category="Electronics"):
     df = _load_data()
 
     cat_df = df[df["category"] == category]
-    fig, axes = plt.subplot(2, 2, figsize=(14, 10))
+    fig, axes = plt.subplots(2, 2, figsize=(14, 10))
 
     # 左上
     monthly = cat_df.set_index("order_date").resample("ME")["amount"]

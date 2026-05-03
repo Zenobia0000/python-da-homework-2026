@@ -137,7 +137,9 @@ def yellow_plotly_scatter(df):
         color = "category", 
         hover_data = ["product_name"], 
         title = "商品單價 vs 訂單金額"
-        )
+    )
+
+    return fig
 
 
 # ============================================================
@@ -179,13 +181,13 @@ def red_dashboard():
     fig = make_subplots(
         rows=2, cols=2,
         subplot_titles=["月營收趨勢", "Top10 商品", "各地區營收", "類別佔比"],
-        specs=[[{}, {}], [{}, {"type": "domain"}]]
+        specs=[[{"type": "xy"}, {"type": "xy"}], [{"type": "xy"}, {"type": "domain"}]]
     )
 
-    fig.add_trace(go.scatter(x=monthly["order_date"], y=monthly["amount"], mode="lines"), row=1, col=1)
-    fig.add_trace(go.bar(x=top10["product_name"], y=top10["amount"], row=1, col=2))
-    fig.add_trace(go.bar(x=by_region["region"], y=by_region["amount"], row=2, col=1))
-    fig.add_trace(go.pie(labels=by_category["category"], values=by_category["amount"], hole=0.4,), row=2, col=2)
+    fig.add_trace(go.Scatter(x=monthly["order_date"], y=monthly["amount"], mode="lines"), row=1, col=1)
+    fig.add_trace(go.Bar(x=top10["product_name"], y=top10["amount"], row=1, col=2))
+    fig.add_trace(go.Bar(x=by_region["region"], y=by_region["amount"], row=2, col=1))
+    fig.add_trace(go.Pie(labels=by_category["category"], values=by_category["amount"], hole=0.4,), row=2, col=2)
 
     fig.update_layout(title_text="營運營表板", showlegend=False, height=700)
 
