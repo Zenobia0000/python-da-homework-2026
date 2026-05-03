@@ -94,7 +94,7 @@ def yellow_clean_and_merge(raw_path, customers_path, products_path):
     order['amount'] = order['amount'].str.replace('$','').str.replace(',','').astype(float)
     order['amount'].fillna(order['amount'].median())
 
-    pd.to_datetime(order['order_date'], errors='coerce')
+    order['order_date'] = pd.to_datetime(order['order_date'], errors='coerce')
 
     order = order.dropna(subset=['order_date'])
     order.drop_duplicates()
@@ -175,6 +175,8 @@ def red_dashboard():
     df = yellow_clean_and_merge('datasets/ecommerce/orders_raw.csv', 
                                 'datasets/ecommerce/customers.csv',
                                 'datasets/ecommerce/products.csv')
+    print(df['order_date'])
+    print("")
     df['month'] = df['order_date'].dt.to_period('M').astype(str)
     m_a = df.groupby('month', as_index=False)['amount'].sum()
     p_a = df.groupby('product_name', as_index=False)['amount'].sum().sort_values('amount',ascending=False).head(10)
@@ -194,4 +196,4 @@ def red_dashboard():
     return fig    
 
 if __name__ == '__main__':
-    pass
+    red_dashboard()
