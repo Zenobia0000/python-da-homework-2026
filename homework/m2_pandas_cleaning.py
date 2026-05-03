@@ -21,7 +21,7 @@ def green_read_csv():
     """
     # TODO: 你的程式碼
     #pass
-    df= pd.read_csv("../datasets/ecommerce/orders_raw.csv")
+    df= pd.read_csv("datasets/ecommerce/orders_raw.csv")
     return df
 
 
@@ -106,10 +106,10 @@ def red_clean_orders(path):
     """
     # TODO: 你的程式碼
     #pass
-    df= pd.read_csv("../datasets/ecommerce/orders_raw.csv")
+    df= pd.read_csv("datasets/ecommerce/orders_raw.csv")
     df.columns = df.columns.str.strip().str.lower()
     df['amount'] = df['amount'].str.strip('$').str.replace(',','').astype(float)
-    pd.to_datetime(df['order_date'], errors='coerce')
+    df['order_date'] = pd.to_datetime(df['order_date'], errors='coerce')
     df = df.dropna(subset=['order_date', 'amount'])
     #這個不確定, 先comment
     df['qty'] = df['qty'].fillna(df['qty'].median)
