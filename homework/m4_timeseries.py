@@ -11,7 +11,7 @@ import pandas as pd
 
 def _load_data():
     """輔助函式：讀取並解析日期"""
-    df = pd.read_csv("../datasets/ecommerce/orders_enriched.csv",
+    df = pd.read_csv("datasets/ecommerce/orders_enriched.csv",
                      parse_dates=["order_date"])
     return df
 

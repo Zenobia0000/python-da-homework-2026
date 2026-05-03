@@ -27,7 +27,7 @@ def green_plotly_bar():
     """
     # TODO: 你的程式碼
     df = pd.read_csv(
-    '../datasets/ecommerce/orders_enriched.csv',
+    'datasets/ecommerce/orders_enriched.csv',
     parse_dates=['order_date'],)
     region_rev = df.groupby('category', as_index=False)['amount'].sum().sort_values('amount', ascending=False)
     fig = px.bar(region_rev, x='category', y='amount', text='amount',
@@ -46,7 +46,7 @@ def green_plotly_line():
     """
     # TODO: 你的程式碼
     df = pd.read_csv(
-    '../datasets/ecommerce/orders_enriched.csv',
+    'datasets/ecommerce/orders_enriched.csv',
     parse_dates=['order_date'],)
     df['month'] = df['order_date'].dt.to_period('M').astype(str)
     monthly = df.groupby('month', as_index=False)['amount'].sum()
@@ -66,7 +66,7 @@ def green_plotly_pie():
     """
     # TODO: 你的程式碼
     df = pd.read_csv(
-    '../datasets/ecommerce/orders_enriched.csv',
+    'datasets/ecommerce/orders_enriched.csv',
     parse_dates=['order_date'],)
     vip_rev = df.groupby('vip_level', as_index=False)['amount'].sum()
     fig = px.pie(vip_rev, names='vip_level', values='amount',
@@ -123,10 +123,10 @@ def yellow_kpi_summary(df):
     }
     """
     # TODO: 你的程式碼
-    df = pd.read_csv('../datasets/ecommerce/orders_raw.csv',
+    df = pd.read_csv('datasets/ecommerce/orders_raw.csv',
     parse_dates=['order_date'],)
-    customers = pd.read_csv('../datasets/ecommerce/customers.csv')
-    products  = pd.read_csv('../datasets/ecommerce/products.csv')
+    customers = pd.read_csv('datasets/ecommerce/customers.csv')
+    products  = pd.read_csv('datasets/ecommerce/products.csv')
     df.columns = df.columns.str.strip().str.lower()
     df['amount'] = (
         df['amount'].astype(str)
@@ -197,10 +197,10 @@ def red_dashboard():
     提示：from plotly.subplots import make_subplots
     """
     # TODO: 你的程式碼
-    df = pd.read_csv('../datasets/ecommerce/orders_raw.csv',
+    df = pd.read_csv('datasets/ecommerce/orders_raw.csv',
     parse_dates=['order_date'],)
-    customers = pd.read_csv('../datasets/ecommerce/customers.csv')
-    products  = pd.read_csv('../datasets/ecommerce/products.csv')
+    customers = pd.read_csv('datasets/ecommerce/customers.csv')
+    products  = pd.read_csv('datasets/ecommerce/products.csv')
     df.columns = df.columns.str.strip().str.lower()
     df['amount'] = (
         df['amount'].astype(str)
