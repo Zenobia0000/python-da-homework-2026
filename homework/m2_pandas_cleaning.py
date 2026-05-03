@@ -106,8 +106,8 @@ def red_clean_orders(path):
     提示：pd.to_datetime(errors='coerce')
     """
     # TODO: 你的程式碼
-    DATA = "/datasets/ecommerce/orders_raw.csv"
-    df = pd.read_csv(DATA)
+
+    df = pd.read_csv(path)
     df.columns = df.columns.str.strip().str.lower()
     df["amount"] = (df['amount']
                 .astype(str)

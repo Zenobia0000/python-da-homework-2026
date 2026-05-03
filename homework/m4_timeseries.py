@@ -83,9 +83,8 @@ def yellow_rolling_avg(monthly_revenue):
     提示：.rolling(window=3).mean()
     """
     # TODO: 你的程式碼
-    yo = yellow_monthly_revenue()
-    month = yo.rolling(window=3).mean()
-    return month
+
+    return monthly_revenue.rolling(window=3).mean()
 
 
 def yellow_category_median(df):
@@ -95,9 +94,8 @@ def yellow_category_median(df):
     提示：groupby + median + sort_values
     """
     # TODO: 你的程式碼
-    df = _load_data()
-    test = df.groupby('category')['amount'].median().sort_values(ascending=False)
-    return test
+
+    return df.groupby('category')['amount'].median().sort_values(ascending=False)
 
 
 # ============================================================

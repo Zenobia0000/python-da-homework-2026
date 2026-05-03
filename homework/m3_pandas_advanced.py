@@ -73,14 +73,7 @@ def yellow_top_category(df):
     提示：groupby('category')['amount'].sum()
     """
     # TODO: 你的程式碼
-    orders = pd.read_csv("datasets/ecommerce/orders_clean.csv")
-    customers = pd.read_csv("datasets/ecommerce/customers.csv")
-    products = pd.read_csv("datasets/ecommerce/products.csv")
-    df = (
-            orders
-            .merge(customers, on = 'customer_id', how='left')
-            .merge(products, on = 'product_id', how='left')
-    )
+
     amount = df.groupby('category')['amount'].sum().sort_values(ascending=False).head(1)
     return amount
 
@@ -92,14 +85,7 @@ def yellow_gold_vip_stats(df):
     提示：df[df['vip_level'] == 'Gold']
     """
     # TODO: 你的程式碼
-    orders = pd.read_csv("datasets/ecommerce/orders_clean.csv")
-    customers = pd.read_csv("datasets/ecommerce/customers.csv")
-    products = pd.read_csv("datasets/ecommerce/products.csv")
-    df = (
-            orders
-            .merge(customers, on = 'customer_id', how='left')
-            .merge(products, on = 'product_id', how='left')
-    )
+
     vip = df[df['vip_level'] == 'Gold']
     vip_sum = len(vip['order_id'])
     vip_amount = float(vip['amount'].sum())
@@ -114,14 +100,7 @@ def yellow_region_avg_amount(df):
     提示：groupby('region')['amount'].mean()
     """
     # TODO: 你的程式碼
-    orders = pd.read_csv("datasets/ecommerce/orders_clean.csv")
-    customers = pd.read_csv("datasets/ecommerce/customers.csv")
-    products = pd.read_csv("datasets/ecommerce/products.csv")
-    df = (
-            orders
-            .merge(customers, on = 'customer_id', how='left')
-            .merge(products, on = 'product_id', how='left')
-    )
+
     Series = df.groupby('region')['amount'].mean()
     return Series
 
