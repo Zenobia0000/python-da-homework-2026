@@ -20,8 +20,7 @@ def green_mean():
     """建立 [10, 20, 30, 40, 50]，回傳所有元素的平均值 (float)"""
     # TODO: 你的程式碼
     arr = np.mean([10, 20, 30, 40, 50])
-    result = arr
-    return result
+    return arr
     
 
 
@@ -29,16 +28,15 @@ def green_double():
     """建立 [10, 20, 30, 40, 50]，回傳所有元素乘以 2 的 ndarray"""
     # TODO: 你的程式碼
     arr = np.array([10, 20, 30, 40, 50])
-    result = arr * 2
-    return result
+    return arr * 2
 
 
 def green_filter():
     """建立 [10, 20, 30, 40, 50]，回傳大於 25 的元素 (ndarray)"""
     # TODO: 你的程式碼
     arr = np.array([10, 20, 30, 40, 50])
-    result = arr[arr > 25]
-    return result    
+    return arr[arr > 25]
+        
 
 # ============================================================
 # 🟡 核心題（每題 15 分，共 45 分）
