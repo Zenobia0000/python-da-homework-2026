@@ -9,7 +9,6 @@ M2 Pandas I/O 與資料清理 — 課後作業
 """
 import pandas as pd
 
-
 # ============================================================
 # 🟢 送分題（每題 10 分，共 30 分）
 # ============================================================
@@ -19,8 +18,8 @@ def green_read_csv():
     讀取 orders_raw.csv，回傳原始 DataFrame（不做任何清理）
     提示：pd.read_csv()
     """
-    # TODO: 你的程式碼
-    pass
+    df = pd.read_csv("datasets/ecommerce/orders_raw.csv")
+    return df
 
 
 def green_shape(df):
@@ -28,8 +27,7 @@ def green_shape(df):
     回傳 DataFrame 的 (列數, 欄數) tuple
     提示：df.shape
     """
-    # TODO: 你的程式碼
-    pass
+    return df.shape
 
 
 def green_dtypes(df):
@@ -37,9 +35,7 @@ def green_dtypes(df):
     回傳 DataFrame 的欄位型別 (Series)
     提示：df.dtypes
     """
-    # TODO: 你的程式碼
-    pass
-
+    return df.dtypes
 
 # ============================================================
 # 🟡 核心題（每題 15 分，共 45 分）
@@ -51,9 +47,15 @@ def yellow_clean_columns(df):
     回傳清理後的 DataFrame（不要修改原始 df）
     提示：df.columns.str.strip().str.lower()
     """
-    # TODO: 你的程式碼
-    pass
+    df2 = df.copy()
+    df2.columns = df.columns.str.strip().str.lower()
+    return df2
+# 1. 執行讀取與清理
+df = yellow_clean_columns(green_read_csv())
 
+# 2. 打印結果
+print(df.columns.tolist()) # 查看清理後的欄位名稱
+print(df.head())           # 查看資料內容
 
 def yellow_clean_amount(df):
     """
@@ -62,9 +64,10 @@ def yellow_clean_amount(df):
     回傳清理後的 DataFrame（不要修改原始 df）
     提示：.str.replace() + .astype(float)
     """
-    # TODO: 你的程式碼
-    pass
-
+    df2 = df.copy()
+    df2.columns = df.columns.str.strip().str.lower()
+    df2["amount"] = df2["amount"].str.replace("$", "").str.replace(",", "").astype(float)
+    return df2
 
 def yellow_drop_duplicates(df):
     """
@@ -72,8 +75,8 @@ def yellow_drop_duplicates(df):
     提示：df.drop_duplicates()
     """
     # TODO: 你的程式碼
-    pass
-
+    df2 = df.copy()
+    return df2.drop_duplicates()
 
 # ============================================================
 # 🔴 挑戰題（25 分）
@@ -92,5 +95,10 @@ def red_clean_orders(path):
     回傳：清理後的 DataFrame
     提示：pd.to_datetime(errors='coerce')
     """
-    # TODO: 你的程式碼
-    pass
+    df = pd.read_csv(path)
+    df.columns = df.columns.str.strip().str.lower()
+    df["amount"] = df["amount"].str.replace("$", "").str.replace(",", "").astype(float)
+    df["order_date"] = pd.to_datetime(df["order_date"], errors="coerce")
+    df.dropna(subset=["amount", "order_date"], inplace=True)
+    df.drop_duplicates(inplace=True)
+    return df
