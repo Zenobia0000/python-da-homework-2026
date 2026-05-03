@@ -7,6 +7,7 @@ M4 時間序列與 EDA — 課後作業
 資料路徑：datasets/ecommerce/orders_enriched.csv
 """
 import pandas as pd
+import numpy as np
 
 
 def _load_data():
@@ -20,48 +21,56 @@ def _load_data():
 # 🟢 送分題（每題 10 分，共 30 分）
 # ============================================================
 
-def green_avg_by_month():
+def green_avg_by_month(df):
     """
     計算每個月份 (1~12) 的平均訂單金額
     回傳 Series（index=月份 1~12, values=平均金額）
     提示：df['order_date'].dt.month
     """
-    # TODO: 你的程式碼
-    pass
+    # TODO:
+    # df = _load_data() #用df去替代讀取
+    return df.groupby(df['order_date'].dt.month)['amount'].mean() #使用dt.month抓出1, 2, 3月...
 
 
-def green_top3_dates():
+def green_top3_dates(df):
     """
     找出訂單數最多的前 3 個日期
     回傳 Series（index=日期, values=訂單數, 由多到少排序）
     提示：value_counts().head(3)
     """
-    # TODO: 你的程式碼
-    pass
+    # TODO: 
+    # ts = df.set_index('order_date').sort_index()
+    # ts['order_id'].resample('D').count().sort_values(ascending=False).head(3)
+    # return ts
+    # df = _load_data() 用df去替代讀取
+    top3_dates =df['order_date'].value_counts().head(3)
+    return top3_dates
 
-
-def green_date_range():
+def green_date_range(df):
     """
     回傳資料的日期範圍 tuple: (最早日期, 最晚日期)
     格式為 pandas Timestamp
     """
-    # TODO: 你的程式碼
-    pass
-
+    # TODO:
+    # df = _load_data() 用df去替代讀取
+    start_date = df['order_date'].min() #最早日期
+    finally_date = df['order_date'].max() #最晚日期
+    return(start_date, finally_date)
 
 # ============================================================
 # 🟡 核心題（每題 15 分，共 45 分）
 # ============================================================
 
-def yellow_monthly_revenue():
+def yellow_monthly_revenue(df):
     """
     計算每月總營收
     回傳 Series（index=月底日期 period, values=總營收）
     提示：set_index('order_date').resample('ME')['amount'].sum()
     """
-    # TODO: 你的程式碼
-    pass
-
+    # TODO:
+    # df = _load_data() 用df去替代讀取
+    ts = df.set_index('order_date').sort_index()
+    return ts['amount'].resample('ME').sum()
 
 def yellow_rolling_avg(monthly_revenue):
     """
@@ -70,8 +79,10 @@ def yellow_rolling_avg(monthly_revenue):
     回傳 Series（同樣 index，values=移動平均，前 2 筆可為 NaN）
     提示：.rolling(window=3).mean()
     """
-    # TODO: 你的程式碼
-    pass
+    # TODO:
+    # monthly_revenue = df.set_index('order_date').sort_index()
+    # monthly_revenue['order_id'].resample('ME').count().rolling(window=3).mean().head(15)
+    return monthly_revenue.rolling(window=3).mean()
 
 
 def yellow_category_median(df):
@@ -80,15 +91,21 @@ def yellow_category_median(df):
     回傳 Series（index=category, values=中位數）
     提示：groupby + median + sort_values
     """
-    # TODO: 你的程式碼
-    pass
+    # TODO:
+    category_median = (
+        df.groupby('category')['amount']
+          .median()
+          .sort_values(ascending=False) ##.sort_values() Pandas對數值進行排序,ascending=False是數值由大到小排序.
+          .round(1)
+    )
+    return category_median
 
 
 # ============================================================
 # 🔴 挑戰題（25 分）
 # ============================================================
 
-def red_monthly_report():
+def red_monthly_report(df):
     """
     產出月報 DataFrame，每月一列，包含：
     - order_count：當月訂單數
@@ -100,5 +117,16 @@ def red_monthly_report():
     index 為月份 (period 或 datetime)
     提示：resample + agg + pct_change
     """
-    # TODO: 你的程式碼
-    pass
+    # TODO: 
+    ts = df.set_index('order_date').sort_index()
+
+    report = ts.resample('ME').agg(
+        order_count =('order_id', 'count'),
+        revenue =('amount', 'sum'),
+        active_customers =('customer_id', 'nunique') 
+    )
+
+    report['avg_order_value'] = report['revenue'] / report['order_count']
+    report['revenue_growth'] = ( report['revenue'].pct_change() * 100 ).round(2)
+
+    return report
