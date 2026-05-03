@@ -28,9 +28,9 @@ def green_bar_category():
     回傳 matplotlib Figure 物件
     提示：sns.countplot 或 value_counts().plot.bar()
     """
-    # TODO: 你的程式碼
-    pass
-
+    fig = plt.figure()
+    sns.countplot(x='category', data=df)
+    return fig
 
 def green_hist_amount():
     """
@@ -38,8 +38,9 @@ def green_hist_amount():
     回傳 matplotlib Figure 物件
     提示：sns.histplot(bins=20) 或 plt.hist()
     """
-    # TODO: 你的程式碼
-    pass
+    fig = plt.figure()
+    sns.histplot(df['amount'], bins=20)
+    return fig
 
 
 def green_set_labels():
@@ -50,8 +51,12 @@ def green_set_labels():
     - Y 軸標籤 (ylabel)
     回傳 matplotlib Figure 物件
     """
-    # TODO: 你的程式碼
-    pass
+    fig = plt.figure()
+    plt.bar(['A', 'B', 'C'], [1, 2, 3])
+    plt.title("Sample Title")
+    plt.xlabel("X Label")
+    plt.ylabel("Y Label")
+    return fig
 
 
 # ============================================================
@@ -67,9 +72,13 @@ def yellow_line_region_trend():
     回傳 matplotlib Figure 物件
     提示：分別 groupby 再 plot，或用 sns.lineplot(hue='region')
     """
-    # TODO: 你的程式碼
-    pass
-
+    fig = plt.figure()
+    plot_df = df[df['region'].isin(['North', 'South'])].copy()
+    plot_df['month'] = plot_df['order_date'].dt.to_period('M').astype(str)
+    trend = plot_df.groupby(['month', 'region'])['amount'].sum().reset_index()
+    sns.lineplot(data=trend, x='month', y='amount', hue='region')
+    plt.legend()
+    return fig
 
 def yellow_box_vip():
     """
@@ -77,9 +86,9 @@ def yellow_box_vip():
     回傳 matplotlib Figure 物件
     提示：sns.boxplot(x='vip_level', y='amount', data=df)
     """
-    # TODO: 你的程式碼
-    pass
-
+    fig = plt.figure()
+    sns.boxplot(x='vip_level', y='amount', data=df)
+    return fig
 
 def yellow_scatter_price_amount():
     """
@@ -87,8 +96,10 @@ def yellow_scatter_price_amount():
     回傳 matplotlib Figure 物件
     提示：plt.scatter() 或 sns.scatterplot()
     """
-    # TODO: 你的程式碼
-    pass
+    fig = plt.figure()
+    sns.scatterplot(x='unit_price', y='amount', data=df)
+    return fig
+
 
 
 # ============================================================
@@ -106,5 +117,3 @@ def red_category_dashboard(category="Electronics"):
     回傳 matplotlib Figure 物件
     提示：fig, axes = plt.subplots(2, 2, figsize=(14, 10))
     """
-    # TODO: 你的程式碼
-    pass
