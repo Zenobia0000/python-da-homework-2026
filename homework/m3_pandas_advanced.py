@@ -24,18 +24,26 @@ def green_load_and_merge():
     提示：pd.merge(how='left')
     """
     # TODO: 你的程式碼
+    df1 = pd.read_csv("datasets/ecommerce/orders_clean.csv")
+    df2 = pd.read_csv("datasets/ecommerce/customers.csv")
+    df3 = pd.read_csv("datasets/ecommerce/products.csv")
+    df4 = pd.merge(df1, df2, on = "customer_id", how = 'left')
+    df5 = pd.merge(df4, df3, on = "product_id", how = 'left')#要注意merge有方向性，以誰為主體，誰並過去
+    return df5
     pass
 
 
 def green_row_count(df):
     """回傳 DataFrame 的列數 (int)"""
     # TODO: 你的程式碼
+    return len(df)
     pass
 
 
 def green_column_list(df):
     """回傳 DataFrame 的所有欄位名稱 (list)"""
     # TODO: 你的程式碼
+    return list(df.columns)
     pass
 
 
@@ -50,7 +58,12 @@ def yellow_top_category(df):
     提示：groupby('category')['amount'].sum()
     """
     # TODO: 你的程式碼
-    pass
+    price = df.groupby('category')['amount'].sum()
+     # idxmax()找最大值
+    return price.idmax()
+    
+    
+    
 
 
 def yellow_gold_vip_stats(df):
@@ -60,7 +73,10 @@ def yellow_gold_vip_stats(df):
     提示：df[df['vip_level'] == 'Gold']
     """
     # TODO: 你的程式碼
-    pass
+    gold_df = df[df['vip_level'] == 'Gold']
+    total_order = len(gold_df)
+    total_amount = gold_df['amount'].sum()
+    return (total_order, total_amount)
 
 
 def yellow_region_avg_amount(df):
@@ -70,7 +86,10 @@ def yellow_region_avg_amount(df):
     提示：groupby('region')['amount'].mean()
     """
     # TODO: 你的程式碼
-    pass
+    reg = df.groupby('region')['amount'].mean()
+    return reg
+    
+    
 
 
 # ============================================================
@@ -94,4 +113,24 @@ def red_rfm_top5(df):
     提示：groupby('customer_id').agg(...)
     """
     # TODO: 你的程式碼
-    pass
+    rfm_dic = df.groupby("customer_id").agg({
+        "order_date":"max", #R 這裡的max是方法
+        "customer_id":"count",#F
+        "amount" :"sum"#M
+    })
+
+    # 改欄位名稱
+    rfm_dic.columns = ["R","F","M"]
+
+    # 去看有沒有重複的人，清一清
+    name = df[["customer_id","customer_name"]].drop_duplicates()
+    # left join 因為有訂單(rfm)的人才把名字算進來
+    rfm_dic = rfm_dic.reset_index().merge(name, on = "customer_id", how = "left")
+    # 改欄位順序 df[[xxx,xx,x]]
+    rfm_dic = rfm_dic[["customer_id", "customer_name", "R", "F", "M"]]
+    # 按 M 由大到小排序，要用sort_values，是df有欄位名稱所以可以指定
+    rfm_dic = rfm_dic.sort_values("M", ascending = False).head(5)
+
+    return rfm_dic
+
+    
