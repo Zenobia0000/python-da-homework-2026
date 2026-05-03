@@ -23,20 +23,23 @@ def green_load_and_merge():
     - 再 LEFT JOIN products.csv ON product_id
     提示：pd.merge(how='left')
     """
-    # TODO: 你的程式碼
-    pass
+    orders = pd.read_csv("datasets/ecommerce/orders_clean.csv")
+    customers = pd.read_csv("datasets/ecommerce/customers.csv")
+    products = pd.read_csv("datasets/ecommerce/products.csv")
+
+    df = pd.merge(orders, customers, on="customer_id", how="left")
+    df = pd.merge(df, products, on="product_id", how="left")
+    return df
 
 
 def green_row_count(df):
     """回傳 DataFrame 的列數 (int)"""
-    # TODO: 你的程式碼
-    pass
+    return int(len(df))
 
 
 def green_column_list(df):
     """回傳 DataFrame 的所有欄位名稱 (list)"""
-    # TODO: 你的程式碼
-    pass
+    return list(df.columns)
 
 
 # ============================================================
@@ -49,8 +52,8 @@ def yellow_top_category(df):
     回傳該類別名稱 (str)
     提示：groupby('category')['amount'].sum()
     """
-    # TODO: 你的程式碼
-    pass
+    revenue_by_cat = df.groupby("category")["amount"].sum()
+    return revenue_by_cat.idxmax()
 
 
 def yellow_gold_vip_stats(df):
@@ -59,8 +62,10 @@ def yellow_gold_vip_stats(df):
     回傳 tuple: (訂單數 int, 總金額 float)
     提示：df[df['vip_level'] == 'Gold']
     """
-    # TODO: 你的程式碼
-    pass
+    sub = df[df["vip_level"] == "Gold"]
+    order_count = int(len(sub))
+    total_amount = float(sub["amount"].sum())
+    return order_count, total_amount
 
 
 def yellow_region_avg_amount(df):
@@ -69,8 +74,7 @@ def yellow_region_avg_amount(df):
     回傳 Series（index=region, values=平均金額）
     提示：groupby('region')['amount'].mean()
     """
-    # TODO: 你的程式碼
-    pass
+    return df.groupby("region")["amount"].mean()
 
 
 # ============================================================
@@ -93,5 +97,30 @@ def red_rfm_top5(df):
 
     提示：groupby('customer_id').agg(...)
     """
-    # TODO: 你的程式碼
-    pass
+    data = df.copy()
+
+    # 確保日期型別可比較
+    data["order_date"] = pd.to_datetime(data["order_date"], errors="coerce")
+
+    agg = (
+        data.groupby("customer_id")
+        .agg(
+            R=("order_date", "max"),
+            F=("order_date", "count"),
+            M=("amount", "sum"),
+        )
+        .reset_index()
+    )
+
+    # 取每位客戶的名稱（假設同一 customer_id 對應唯一名稱）
+    names = (
+        data[["customer_id", "customer_name"]]
+        .drop_duplicates(subset=["customer_id"])
+    )
+
+    result = pd.merge(agg, names, on="customer_id", how="left")
+
+    result = result[["customer_id", "customer_name", "R", "F", "M"]]
+    result = result.sort_values("M", ascending=False).head(5)
+
+    return result.reset_index(drop=True)
