@@ -20,6 +20,8 @@ def green_read_csv():
     提示：pd.read_csv()
     """
     # TODO: 你的程式碼
+    df = pd.read_csv("../datasets/ecommerce/orders_raw.csv")
+    return df
     pass
 
 
@@ -29,6 +31,7 @@ def green_shape(df):
     提示：df.shape
     """
     # TODO: 你的程式碼
+    return df.shape
     pass
 
 
@@ -38,6 +41,7 @@ def green_dtypes(df):
     提示：df.dtypes
     """
     # TODO: 你的程式碼
+    return df.dtypes
     pass
 
 
@@ -52,6 +56,9 @@ def yellow_clean_columns(df):
     提示：df.columns.str.strip().str.lower()
     """
     # TODO: 你的程式碼
+    new_df = df.copy()
+    new_df.columns = new_df.columns.str.strip().str.lower()
+    return new_df
     pass
 
 
@@ -63,6 +70,9 @@ def yellow_clean_amount(df):
     提示：.str.replace() + .astype(float)
     """
     # TODO: 你的程式碼
+    new_df = df.copy()
+    new_df['amount'] = new_df['amount'].str.replace('$', '', regex=False).str.replace(',', '',regex=False).astype(float)
+    return new_df
     pass
 
 
@@ -72,6 +82,7 @@ def yellow_drop_duplicates(df):
     提示：df.drop_duplicates()
     """
     # TODO: 你的程式碼
+    return df.drop_duplicates()
     pass
 
 
@@ -93,4 +104,11 @@ def red_clean_orders(path):
     提示：pd.to_datetime(errors='coerce')
     """
     # TODO: 你的程式碼
+    df = pd.read_csv(path)
+    df.columns = df.columns.str.strip().str.lower()
+    df['amount'] = df['amount'].str.replace('$', '', regex=False).str.replace(',', '', regex=False).astype(float)
+    df['order_date'] = pd.to_datetime(df['order_date'], errors='coerce')
+    df = df.dropna(subset=['amount', 'order_date'], how='any')
+    df = df.drop_duplicates()
+    return df
     pass
