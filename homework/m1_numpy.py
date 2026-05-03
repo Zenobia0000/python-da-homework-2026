@@ -11,7 +11,6 @@ M1 NumPy 向量化思維 — 課後作業
 """
 import numpy as np
 
-
 # ============================================================
 # 🟢 送分題（每題 10 分，共 30 分）
 # ============================================================
@@ -43,13 +42,14 @@ def green_filter():
 # 以下函式會接收從 products.csv 讀出的 prices, stocks 陣列
 # ============================================================
 
+# ---------- 載入 products.csv ----------
+DATA_PATH = "datasets/ecommerce/products.csv"
+prices = np.genfromtxt(DATA_PATH, delimiter=",", skip_header=1, usecols=3)
+stocks = np.genfromtxt(DATA_PATH, delimiter=",", skip_header=1, usecols=4)
+
 def yellow_expensive_count(prices):
     """回傳單價 > 1000 的商品數量 (int)"""
-    # TODO: 你的程式碼
-    DATA = '../datasets/products.csv'
-    unit_price = np.genfromtxt(DATA, delimiter=',', skip_header=1, usecols=3)
-    result = len(unit_price[unit_price > 1000])
-    return (result)
+    return prices[prices>1000].size
 
 
 def yellow_top3_stock_indices(stocks):
@@ -57,12 +57,7 @@ def yellow_top3_stock_indices(stocks):
     回傳庫存最多的前 3 個商品的索引位置 (ndarray, 由大到小排)
     提示：np.argsort
     """
-    # TODO: 你的程式碼
-    DATA = '../datasets/ecommerce/products.csv'
-    qty_stock = np.genfromtxt(DATA, delimiter=',', skip_header=1, usecols=4)
-    result = np.argsort(qty_stock)
-    top3_stock = result[::-1][:3]
-    return top3_stock
+    return np.argsort(stocks)[::-1][:3]
 
 
 def yellow_restock_cost(prices, stocks):
@@ -70,18 +65,12 @@ def yellow_restock_cost(prices, stocks):
     單價 < 500 的商品，每種各進貨 50 個，回傳總花費 (float/int)
     提示：布林遮罩 + .sum()
     """
-    # TODO: 你的程式碼
-    DATA = '../datasets/ecommerce/products.csv'
-    unit_price = np.genfromtxt(DATA, delimiter=',', skip_header=1, usecols=3)
-    qty_stock = np.genfromtxt(DATA, delimiter=',', skip_header=1, usecols=4)
-
-    lower_500 = unit_price[np.array(unit_price < 500)]
-    total_price = lower_500.sum()* 50
-    return total_price
+    return (prices[prices < 500] * 50).sum()
 
 # ============================================================
 # 🔴 挑戰題（25 分）
 # ============================================================
+
 
 def red_double11_prices(prices, stocks):
     """
@@ -92,18 +81,5 @@ def red_double11_prices(prices, stocks):
     回傳每個商品的雙 11 售價 (ndarray)
     提示：np.where 可以巢狀使用
     """
-    # TODO: 你的程式碼
-    DATA = '../datasets/ecommerce/products.csv'
-    price = np.genfromtxt(DATA, delimiter=',', skip_header=1, usecols=3)
-    stock = np.genfromtxt(DATA, delimiter=',', skip_header=1, usecols=4)
-
-    final_price = np.where(
-    stock >= 100,                       
-    price * 0.7,                        
-    np.where(
-        stock >= 20,                
-        price * 0.9,            
-        price                    
-    )
-)
-    return final_price
+    return np.where(stocks >= 100, prices * 0.7, 
+             np.where((stocks >= 20) & (stocks <= 99), prices * 0.9, prices))
