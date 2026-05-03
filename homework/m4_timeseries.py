@@ -13,6 +13,11 @@ def _load_data():
     """輔助函式：讀取並解析日期"""
     df = pd.read_csv("datasets/ecommerce/orders_enriched.csv",
                      parse_dates=["order_date"])
+    df['year']     = df['order_date'].dt.year
+    df['month']    = df['order_date'].dt.month
+    df['weekday']  = df['order_date'].dt.day_name()
+    df['year_mon'] = df['order_date'].dt.to_period('M')
+
     return df
 
 
@@ -26,8 +31,11 @@ def green_avg_by_month():
     回傳 Series（index=月份 1~12, values=平均金額）
     提示：df['order_date'].dt.month
     """
-    # TODO: 你的程式碼
-    pass
+
+    df = _load_data()
+    avg_by_month = df.groupby('month')['amount'].mean().round(1)
+    
+    return avg_by_month
 
 
 def green_top3_dates():
@@ -36,8 +44,10 @@ def green_top3_dates():
     回傳 Series（index=日期, values=訂單數, 由多到少排序）
     提示：value_counts().head(3)
     """
-    # TODO: 你的程式碼
-    pass
+    df = _load_data()
+    top3_days = df['order_date'].dt.date.value_counts().head(3)
+
+    return top3_days
 
 
 def green_date_range():
@@ -45,8 +55,8 @@ def green_date_range():
     回傳資料的日期範圍 tuple: (最早日期, 最晚日期)
     格式為 pandas Timestamp
     """
-    # TODO: 你的程式碼
-    pass
+    df = _load_data()
+    return (df['order_date'].min(), df['order_date'].max())
 
 
 # ============================================================
@@ -59,8 +69,14 @@ def yellow_monthly_revenue():
     回傳 Series（index=月底日期 period, values=總營收）
     提示：set_index('order_date').resample('ME')['amount'].sum()
     """
-    # TODO: 你的程式碼
-    pass
+    df = _load_data()
+    monthly_revenue = (
+        df.set_index('order_date')
+          .resample('ME')['amount']
+          .sum()
+    )
+
+    return monthly_revenue
 
 
 def yellow_rolling_avg(monthly_revenue):
@@ -70,8 +86,8 @@ def yellow_rolling_avg(monthly_revenue):
     回傳 Series（同樣 index，values=移動平均，前 2 筆可為 NaN）
     提示：.rolling(window=3).mean()
     """
-    # TODO: 你的程式碼
-    pass
+    return monthly_revenue.rolling(window=3).mean().round(1)
+
 
 
 def yellow_category_median(df):
@@ -80,8 +96,14 @@ def yellow_category_median(df):
     回傳 Series（index=category, values=中位數）
     提示：groupby + median + sort_values
     """
-    # TODO: 你的程式碼
-    pass
+    median_by_cat = (
+    df.groupby('category')['amount']
+      .median()
+      .sort_values(ascending=False)
+      .round(1)
+    )
+
+    return median_by_cat
 
 
 # ============================================================
@@ -100,5 +122,32 @@ def red_monthly_report():
     index 為月份 (period 或 datetime)
     提示：resample + agg + pct_change
     """
-    # TODO: 你的程式碼
-    pass
+    df = _load_data()
+    monthly_report = (
+    df.groupby('year_mon')
+      .agg(
+        order_count=('order_id', 'count'),
+        revenue=('amount', 'sum'),
+        active_customers=('customer_id', 'nunique'),
+      )
+      .sort_index() 
+    )
+
+    monthly_report['avg_order_value'] = (
+        monthly_report['revenue'] / monthly_report['order_count']
+    ).round(1)
+
+    monthly_report['revenue_growth'] = (
+        monthly_report['revenue'].pct_change() * 100
+    ).round(2)
+
+    return monthly_report
+
+
+
+
+
+
+
+
+
