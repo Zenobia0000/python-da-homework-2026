@@ -92,4 +92,7 @@ def red_double11_prices(prices, stocks):
 
 
 if __name__ == '__main__':
-    pass
+    print(green_mean())
+    print(green_double())
+    print(green_filter())
+    print(red_double11_prices(200,100))

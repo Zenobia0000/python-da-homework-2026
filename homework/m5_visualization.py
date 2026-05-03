@@ -22,6 +22,7 @@ def _load_data():
                        parse_dates=["order_date"])
     return gdf 
 
+_load_data()
 
 # ============================================================
 # 🟢 送分題（每題 10 分，共 30 分）
@@ -36,6 +37,7 @@ def green_bar_category():
     # TODO: 你的程式碼
     #pass
     global gdf
+    #gdf = _load_data()
     co = gdf['category'].value_counts()
     ax = co.plot(kind='bar',figsize=(10,4),title='Order count in Category',rot=45)
     return plt.gcf()
@@ -51,7 +53,7 @@ def green_hist_amount():
     #pass
     global gdf
     fig = plt.figure(figsize=(10,4))
-    ax = sns.histplot(gdf['amount'], bins=20, stat='percent', kde=True, ylabel='%')
+    ax = sns.histplot(gdf['amount'], bins=20, stat='percent', kde=True)
     return fig
 
 
@@ -69,8 +71,8 @@ def green_set_labels():
     reg_order = gdf['region'].value_counts().reset_index()
     fig = plt.figure(figsize=(7,5))
     sns.barplot(data=reg_order, x='region', y='count', palette='viridis', hue='region')
-    plt.xlabel = 'region'
-    plt.ylabel = 'order count'
+    plt.xlabel('region')
+    plt.ylabel('order count')
     plt.title('region vs. order count')
     for r,c in enumerate(reg_order['count']):
         plt.text(r,c, f'{c:,.0f}', ha='center',va='bottom',fontsize=10)
