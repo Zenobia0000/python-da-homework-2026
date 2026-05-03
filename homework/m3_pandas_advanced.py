@@ -51,15 +51,7 @@ def green_row_count(df):
 def green_column_list(df):
     """回傳 DataFrame 的所有欄位名稱 (list)"""
     # TODO: 你的程式碼
-    orders = pd.read_csv("datasets/ecommerce/orders_clean.csv")
-    customers = pd.read_csv("datasets/ecommerce/customers.csv")
-    products = pd.read_csv("datasets/ecommerce/products.csv")
-    df = (
-            orders
-            .merge(customers, on = 'customer_id', how='left')
-            .merge(products, on = 'product_id', how='left')
-    )
-    return df.columns
+    return df.columns.tolist()
 
 
 # ============================================================
@@ -73,9 +65,7 @@ def yellow_top_category(df):
     提示：groupby('category')['amount'].sum()
     """
     # TODO: 你的程式碼
-
-    amount = df.groupby('category')['amount'].sum().sort_values(ascending=False).head(1)
-    return amount
+    return df.groupby('category')['amount'].sum().idxmax()
 
 
 def yellow_gold_vip_stats(df):
@@ -138,26 +128,24 @@ def red_rfm_top5(df):
     #             .merge(products, on = 'product_id', how='left')
     #     )
     RFM = (
-    orders.groupby('customer_id')
-    .agg(
-        recency = ('order_date', 'max'),
-        frequency = ('order_id', 'count'),
-        monetary = ('amount', 'sum'),
+        orders.groupby('customer_id')
+        .agg(
+            R=('order_date', 'max'),
+            F=('order_id', 'count'),
+            M=('amount', 'sum'),
+        )
+        .reset_index()
     )
-    .reset_index()
-)
     rfm_named = RFM.merge(
-    customers[['customer_id', 'customer_name']],
-    on = 'customer_id',
-    how='left',
-)
-
+        customers[['customer_id', 'customer_name']],
+        on='customer_id',
+        how='left',
+    )
     final_5 = (
-    rfm_named
-    .sort_values("M", ascending=False)
-    .head(5)
-    .reset_index(drop=True)
-    [['customer_id', 'customer_name', 'R', 'F', 'M']]
-)
-
+        rfm_named
+        .sort_values('M', ascending=False)
+        .head(5)
+        .reset_index(drop=True)
+        [['customer_id', 'customer_name', 'R', 'F', 'M']]
+    )
     return final_5
