@@ -60,7 +60,7 @@ def yellow_top_category(df):
     # TODO: 你的程式碼
     price = df.groupby('category')['amount'].sum()
      # idxmax()找最大值
-    return price.idmax()
+    return price.idxmax()
     
     
     

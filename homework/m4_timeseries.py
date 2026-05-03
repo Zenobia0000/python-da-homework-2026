@@ -20,32 +20,35 @@ def _load_data():
 # 🟢 送分題（每題 10 分，共 30 分）
 # ============================================================
 
-def green_avg_by_month(df):
+def green_avg_by_month():
     """
     計算每個月份 (1~12) 的平均訂單金額
     回傳 Series（index=月份 1~12, values=平均金額）
     提示：df['order_date'].dt.month
     """
     # TODO: 你的程式碼
+    df = _load_data
+    df['order_date'] = pd.to_datetime(df['order_date'])
     mon = df.groupby(df['order_date'].dt.month)['amount'].mean()
     return mon
 
 
-def green_top3_dates(df):
+def green_top3_dates():
     """
     找出訂單數最多的前 3 個日期
     回傳 Series（index=日期, values=訂單數, 由多到少排序）
     提示：value_counts().head(3)
     """
     # TODO: 你的程式碼
-    df2 = df.copy()
+    df = _load_data
+    df['order_date'] = pd.to_datetime(df['order_date'])
     # 可能會把不同時間當成不同日期，所以要把時拿掉留下日就好
-    df2['order_date'] = pd.to_datetime(df2['order_date']).dt.date
+    df['order_date'] = pd.to_datetime(df['order_date']).dt.date
     top3 = df['order_date'].value_counts().head(3)
     return top3
 
 
-def green_date_range(df):
+def green_date_range():
     """
     回傳資料的日期範圍 tuple: (最早日期, 最晚日期)
     格式為 pandas Timestamp
@@ -53,6 +56,7 @@ def green_date_range(df):
     # TODO: 你的程式碼
     # 這樣就是timestamp型態
     #  dt.date會是 datetime.date的型態
+    df = _load_data()
     dates  = pd.to_datetime(df['order_date'])
     return (dates.min(), dates.max())
 
@@ -61,13 +65,14 @@ def green_date_range(df):
 # 🟡 核心題（每題 15 分，共 45 分）
 # ============================================================
 
-def yellow_monthly_revenue(df):
+def yellow_monthly_revenue():
     """
     計算每月總營收
     回傳 Series（index=月底日期 period, values=總營收）
     提示：set_index('order_date').resample('ME')['amount'].sum()
     """
     # TODO: 你的程式碼
+    df = _load_data()
     # 確保是datetime
     df['order_date'] = pd.to_datetime(df['order_date'])
     #set_index 是把時間變成index 時間序列分系必備
@@ -104,36 +109,40 @@ def yellow_category_median(df):
 # 🔴 挑戰題（25 分）
 # ============================================================
 
-def red_monthly_report(df):
-    """
-    產出月報 DataFrame，每月一列，包含：
-    - order_count：當月訂單數
-    - revenue：當月總營收
-    - active_customers：當月不重複客戶數
-    - avg_order_value：客單價（revenue / order_count）
-    - revenue_growth：月營收成長率（相對上月的 % 變化）
+def red_monthly_report():
+    df = _load_data()
 
-    index 為月份 (period 或 datetime)
-    提示：resample + agg + pct_change
-    """
-    # TODO: 你的程式碼
-    # 確保時間欄位是datetime
-    df['oredre_date'] = pd.to_datetime(df['order_date'])
-    #設定index
+    # datetime
+    df['order_date'] = pd.to_datetime(df['order_date'])
+
+    # 設 index
     df = df.set_index('order_date')
-    # resample 每月+聚合
+
+    # 每月聚合
     monthly = df.resample('ME').agg({
-        'order_id' :'count',
-        'amount':'sum',
-        'customer_id':'nunique'
+        'order_id': 'count',
+        'amount': 'sum',
+        'customer_id': 'nunique'
     })
-    #改欄位名字
-    monthly.columns = ['order_count','revenue','active_customers']
-    
-    #客單價
-    monthly['avg_ordrevalue'] = (monthly['revenue']/monthly['order_count'])
-    
-    #成長率 .pct_change()，自動算「上一期比較成長多少」
-    monthly['revenue_growth'] = (monthly['revenue'].pct_change())
-    
+
+    # 改欄位名稱
+    monthly.columns = [
+        'order_count',
+        'revenue',
+        'active_customers'
+    ]
+
+    # 客單價
+    monthly['avg_order_value'] = (
+        monthly['revenue'] / monthly['order_count']
+    )
+
+    # 6成長率
+    monthly['revenue_growth'] = (
+        monthly['revenue'].pct_change()
+    )
+
+    # 7️轉 period
+    monthly.index = monthly.index.to_period('M')
+
     return monthly

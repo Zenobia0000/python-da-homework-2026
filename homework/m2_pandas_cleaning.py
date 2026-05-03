@@ -21,8 +21,8 @@ def green_read_csv():
     """
     # TODO: 你的程式碼
     #藥用變數去接住他
-    df =pd.read_csv("orders_raw.csv")
-    return df 
+    df = pd.read_csv("datasets/ecommerce/orders_raw.csv")
+    return df
     
     
 
