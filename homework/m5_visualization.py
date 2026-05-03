@@ -29,7 +29,24 @@ def green_bar_category():
     提示：sns.countplot 或 value_counts().plot.bar()
     """
     # TODO: 你的程式碼
-    pass
+    df = _load_data()
+    cat_counts = df['category'].value_counts().reset_index()
+    cat_counts.columns = ['category', 'order_count']
+
+    fig = plt.figure(figsize=(8, 4)) 
+    
+    sns.barplot(
+        data=cat_counts,
+        x='category', y='order_count',
+        hue='category', 
+        palette='viridis', 
+        legend=False
+    )
+    plt.title('Order Count by Category', fontweight='bold')
+    plt.xlabel('Category')
+    plt.ylabel('Order Count')
+    plt.tight_layout()
+    return fig
 
 
 def green_hist_amount():
@@ -39,7 +56,15 @@ def green_hist_amount():
     提示：sns.histplot(bins=20) 或 plt.hist()
     """
     # TODO: 你的程式碼
-    pass
+    df = _load_data()
+    fig = sns.histplot(data=df, x='amount', bins=20, kde=True, color='steelblue')
+    plt.title('Order Amount Distribution', fontweight='bold')
+    plt.xlabel('Amount (NT$)')
+    plt.ylabel('Frequency')
+    plt.tight_layout()
+    
+    return fig
+    
 
 
 def green_set_labels():
@@ -51,7 +76,24 @@ def green_set_labels():
     回傳 matplotlib Figure 物件
     """
     # TODO: 你的程式碼
-    pass
+    df = _load_data()
+    cat_counts = df['category'].value_counts().reset_index()
+    cat_counts.columns = ['category', 'order_count']
+
+    fig = plt.figure(figsize=(8, 4)) 
+    
+    sns.barplot(
+        data=cat_counts,
+        x='category', y='order_count',
+        hue='category', 
+        palette='viridis', 
+        legend=False
+    )
+    plt.title('Order Count by Category', fontweight='bold')
+    plt.xlabel('Category')
+    plt.ylabel('Order Count')
+    plt.tight_layout()
+    return fig
 
 
 # ============================================================
@@ -68,7 +110,28 @@ def yellow_line_region_trend():
     提示：分別 groupby 再 plot，或用 sns.lineplot(hue='region')
     """
     # TODO: 你的程式碼
-    pass
+    df = _load_data()
+    ns_df = df[df['region'].isin(['North', 'South'])]
+    monthly_ns = (
+    ns_df.groupby(['month', 'region'])['amount']
+    .sum()
+    .reset_index()
+)
+
+    fig = plt.figure(figsize=(10, 4))
+    sns.lineplot(
+    data=monthly_ns,
+    x='month', y='amount',
+    hue='region', marker='o', linewidth=2,
+)
+    plt.title('Monthly Revenue: North vs South', fontweight='bold')
+    plt.xlabel('Month')
+    plt.ylabel('Revenue (NT$)')
+    plt.xticks(rotation=45)
+    plt.legend(title='Region')
+    plt.tight_layout()
+    
+    return fig
 
 
 def yellow_box_vip():

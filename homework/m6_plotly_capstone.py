@@ -25,8 +25,10 @@ def green_plotly_bar():
     回傳 plotly Figure 物件
     提示：px.bar()
     """
-    # TODO: 你的程式碼
-    pass
+    df = pd.read_csv('datasets/ecommerce/orders_enriched.csv')
+    category_revenue = df.groupby('category')['amount'].sum().reset_index()
+    fig = px.bar(category_revenue, x='category', y='amount', title='各商品類別總營收')
+    return fig
 
 
 def green_plotly_line():
@@ -36,8 +38,12 @@ def green_plotly_line():
     回傳 plotly Figure 物件
     提示：先 groupby 月份算總營收，再 px.line()
     """
-    # TODO: 你的程式碼
-    pass
+    df = pd.read_csv('datasets/ecommerce/orders_enriched.csv')
+    df['order_date'] = pd.to_datetime(df['order_date'])
+    df['month'] = df['order_date'].dt.to_period('M').astype(str)
+    monthly_revenue = df.groupby('month')['amount'].sum().reset_index()
+    fig = px.line(monthly_revenue, x='month', y='amount', title='月營收趨勢')
+    return fig
 
 
 def green_plotly_pie():
@@ -47,8 +53,10 @@ def green_plotly_pie():
     回傳 plotly Figure 物件
     提示：px.pie()
     """
-    # TODO: 你的程式碼
-    pass
+    df = pd.read_csv('datasets/ecommerce/orders_enriched.csv')
+    vip_orders = df.groupby('vip_level').size().reset_index(name='count')
+    fig = px.pie(vip_orders, values='count', names='vip_level', title='VIP 等級訂單數佔比')
+    return fig
 
 
 # ============================================================
@@ -62,8 +70,36 @@ def yellow_clean_and_merge(raw_path, customers_path, products_path):
     2. 合併 customers.csv 和 products.csv
     回傳：合併後的 DataFrame
     """
-    # TODO: 你的程式碼
-    pass
+    # 讀取資料
+    orders = pd.read_csv(raw_path)
+    
+    # 清理欄位名稱
+    orders.columns = orders.columns.str.strip()
+    
+    # 清理 amount：移除 $ 和 , 轉 float
+    orders['amount'] = orders['amount'].astype(str).str.replace('$', '').str.replace(',', '').astype(float)
+    
+    # 填補 qty 缺值為 1
+    orders['qty'] = orders['qty'].fillna(1).astype(int)
+    
+    # 清理 order_date，drop 空值
+    orders = orders.dropna(subset=['order_date'])
+    
+    # 去重
+    orders = orders.drop_duplicates()
+    
+    # rename 欄位以匹配
+    orders = orders.rename(columns={'Order_ID': 'order_id', 'Product_ID': 'product_id'})
+    
+    # 讀取其他表
+    customers = pd.read_csv(customers_path)
+    products = pd.read_csv(products_path)
+    
+    # 合併
+    df = orders.merge(customers, on='customer_id', how='left')
+    df = df.merge(products, on='product_id', how='left')
+    
+    return df
 
 
 def yellow_kpi_summary(df):
@@ -76,8 +112,17 @@ def yellow_kpi_summary(df):
         "avg_order_value": float,     # 平均客單價
     }
     """
-    # TODO: 你的程式碼
-    pass
+    total_revenue = df['amount'].sum()
+    order_count = df.shape[0]
+    active_customers = df['customer_id'].nunique()
+    avg_order_value = total_revenue / order_count if order_count > 0 else 0
+    
+    return {
+        "total_revenue": total_revenue,
+        "order_count": order_count,
+        "active_customers": active_customers,
+        "avg_order_value": avg_order_value,
+    }
 
 
 def yellow_plotly_scatter(df):
@@ -90,8 +135,9 @@ def yellow_plotly_scatter(df):
     回傳 plotly Figure 物件
     提示：px.scatter(hover_data=['product_name'])
     """
-    # TODO: 你的程式碼
-    pass
+    fig = px.scatter(df, x='unit_price', y='amount', color='category', 
+                     hover_data=['product_name'], title='商品單價 vs 訂單金額')
+    return fig
 
 
 # ============================================================

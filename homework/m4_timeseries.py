@@ -11,7 +11,7 @@ import pandas as pd
 
 def _load_data():
     """輔助函式：讀取並解析日期"""
-    df = pd.read_csv("datasets/ecommerce/orders_enriched.csv",
+    df = pd.read_csv("../datasets/ecommerce/orders_enriched.csv",
                      parse_dates=["order_date"])
     return df
 
@@ -27,7 +27,11 @@ def green_avg_by_month():
     提示：df['order_date'].dt.month
     """
     # TODO: 你的程式碼
-    pass
+
+    df =_load_data()
+    result = df.groupby(df['order_date'].dt.month)['amount'].mean()
+
+    return result
 
 
 def green_top3_dates():
@@ -37,7 +41,9 @@ def green_top3_dates():
     提示：value_counts().head(3)
     """
     # TODO: 你的程式碼
-    pass
+    df =_load_data()
+    top3_days = df['order_date'].dt.date.value_counts().head(3)
+    return top3_days
 
 
 def green_date_range():
@@ -46,8 +52,11 @@ def green_date_range():
     格式為 pandas Timestamp
     """
     # TODO: 你的程式碼
-    pass
+    df =_load_data()
+    min_date = df['order_date'].min()
+    max_date = df['order_date'].max()
 
+    return (min_date, max_date)
 
 # ============================================================
 # 🟡 核心題（每題 15 分，共 45 分）
@@ -60,7 +69,9 @@ def yellow_monthly_revenue():
     提示：set_index('order_date').resample('ME')['amount'].sum()
     """
     # TODO: 你的程式碼
-    pass
+    df = _load_data()
+    mount_total_price = df.set_index('order_date').resample('ME')['amount'].sum()
+    return mount_total_price
 
 
 def yellow_rolling_avg(monthly_revenue):
@@ -71,7 +82,9 @@ def yellow_rolling_avg(monthly_revenue):
     提示：.rolling(window=3).mean()
     """
     # TODO: 你的程式碼
-    pass
+    df = yellow_monthly_revenue()
+    q_total = df.rolling(window=3).mean()
+    return q_total
 
 
 def yellow_category_median(df):
@@ -81,8 +94,9 @@ def yellow_category_median(df):
     提示：groupby + median + sort_values
     """
     # TODO: 你的程式碼
-    pass
-
+    df = _load_data()
+    median = df.groupby('category')['amount'].median().sort_values(ascending=False).round(1)
+    return median
 
 # ============================================================
 # 🔴 挑戰題（25 分）
@@ -101,4 +115,15 @@ def red_monthly_report():
     提示：resample + agg + pct_change
     """
     # TODO: 你的程式碼
-    pass
+    df = _load_data()
+    monthly_report = (
+    df.groupby(df['order_date'].dt.month).agg(
+          總訂單數=('order_id', 'count'),
+          總營收=('amount', 'sum'),
+          不重複客戶數=('customer_id', 'nunique'),).sort_index())
+    monthly_report["客單價"] = (monthly_report['總營收'] / monthly_report['總訂單數']).round(1)
+    monthly_report['MoM成長率(%)'] = (
+    monthly_report['總營收'].pct_change() * 100).round(2)
+    monthly_report = monthly_report.reset_index().rename(columns={'order_date':  '月份'})
+
+    return monthly_report
