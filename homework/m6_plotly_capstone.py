@@ -29,7 +29,7 @@ def green_plotly_bar():
     """
     # TODO: 你的程式碼
     #pass
-    df = pd.read_csv("../datasets/ecommerce/orders_enriched.csv",
+    df = pd.read_csv("datasets/ecommerce/orders_enriched.csv",
                         parse_dates=["order_date"])
     c_a = df.groupby('category', as_index=False)['amount'].sum()
     fig = px.bar(c_a, x='category',y='amount',text='amount', color='category', title='category vs. amount')
@@ -172,9 +172,9 @@ def red_dashboard():
     """
     # TODO: 你的程式碼
     #pass
-    df = yellow_clean_and_merge('../datasets/ecommerce/orders_raw.csv', 
-                                '../datasets/ecommerce/customers.csv',
-                                '../datasets/ecommerce/products.csv')
+    df = yellow_clean_and_merge('datasets/ecommerce/orders_raw.csv', 
+                                'datasets/ecommerce/customers.csv',
+                                'datasets/ecommerce/products.csv')
     df['month'] = df['order_date'].dt.to_period('M').astype(str)
     m_a = df.groupby('month', as_index=False)['amount'].sum()
     p_a = df.groupby('product_name', as_index=False)['amount'].sum().sort_values('amount',ascending=False).head(10)

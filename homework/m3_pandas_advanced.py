@@ -25,9 +25,9 @@ def green_load_and_merge():
     """
     # TODO: 你的程式碼
     #pass
-    order = pd.read_csv("../datasets/ecommerce/orders_clean.csv")
-    customer = pd.read_csv("../datasets/ecommerce/customers.csv")
-    prod = pd.read_csv("../datasets/ecommerce/products.csv")
+    order = pd.read_csv("datasets/ecommerce/orders_clean.csv")
+    customer = pd.read_csv("datasets/ecommerce/customers.csv")
+    prod = pd.read_csv("datasets/ecommerce/products.csv")
     df = ( 
         order.merge(customer, how='left', on='customer_id')
         .merge(prod, how='left', on='product_id')
@@ -74,7 +74,7 @@ def yellow_gold_vip_stats(df:pd.DataFrame):
     # TODO: 你的程式碼
     #pass
     mask = (df['vip_level'] == 'Gold')
-    return (mask.count(), df[mask]['amount'].sum())
+    return (mask.sum(), df[mask]['amount'].sum())
 
 
 
