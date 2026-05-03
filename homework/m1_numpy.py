@@ -19,20 +19,26 @@ import numpy as np
 def green_mean():
     """建立 [10, 20, 30, 40, 50]，回傳所有元素的平均值 (float)"""
     # TODO: 你的程式碼
-    pass
+    #pass
+    return np.array([10,20,30,40,50]).mean()
 
 
 def green_double():
     """建立 [10, 20, 30, 40, 50]，回傳所有元素乘以 2 的 ndarray"""
     # TODO: 你的程式碼
-    pass
+    #pass
+    return np.array([10,20,30,40,50])*2
+
 
 
 def green_filter():
     """建立 [10, 20, 30, 40, 50]，回傳大於 25 的元素 (ndarray)"""
     # TODO: 你的程式碼
-    pass
-
+    #pass
+    arr = np.array([10,20,30,40,50])
+    return arr[arr>25]
+    
+   
 
 # ============================================================
 # 🟡 核心題（每題 15 分，共 45 分）
@@ -42,7 +48,8 @@ def green_filter():
 def yellow_expensive_count(prices):
     """回傳單價 > 1000 的商品數量 (int)"""
     # TODO: 你的程式碼
-    pass
+    #pass
+    return (prices > 1000).sum()
 
 
 def yellow_top3_stock_indices(stocks):
@@ -51,7 +58,8 @@ def yellow_top3_stock_indices(stocks):
     提示：np.argsort
     """
     # TODO: 你的程式碼
-    pass
+    #pass
+    return np.argsort(-stocks)[:3]
 
 
 def yellow_restock_cost(prices, stocks):
@@ -60,7 +68,8 @@ def yellow_restock_cost(prices, stocks):
     提示：布林遮罩 + .sum()
     """
     # TODO: 你的程式碼
-    pass
+    #pass
+    return (prices[ prices < 500] * 50).sum()
 
 
 # ============================================================
@@ -77,4 +86,13 @@ def red_double11_prices(prices, stocks):
     提示：np.where 可以巢狀使用
     """
     # TODO: 你的程式碼
-    pass
+    #pass
+    new_prices = np.where(stocks>=100, prices*0.7, np.where( stocks>=20, prices*0.9, prices))
+    return new_prices
+
+
+if __name__ == '__main__':
+    print(green_mean())
+    print(green_double())
+    print(green_filter())
+    print(red_double11_prices(200,100))

@@ -20,7 +20,9 @@ def green_read_csv():
     提示：pd.read_csv()
     """
     # TODO: 你的程式碼
-    pass
+    #pass
+    df= pd.read_csv("datasets/ecommerce/orders_raw.csv")
+    return df
 
 
 def green_shape(df):
@@ -29,7 +31,8 @@ def green_shape(df):
     提示：df.shape
     """
     # TODO: 你的程式碼
-    pass
+    #pass
+    return df.shape
 
 
 def green_dtypes(df):
@@ -38,24 +41,29 @@ def green_dtypes(df):
     提示：df.dtypes
     """
     # TODO: 你的程式碼
-    pass
+    #pass
+    return df.dtypes
+    
 
 
 # ============================================================
 # 🟡 核心題（每題 15 分，共 45 分）
 # ============================================================
 
-def yellow_clean_columns(df):
+def yellow_clean_columns(df:pd.DataFrame ):
     """
     清理欄位名稱：去除前後空白、全部轉小寫
     回傳清理後的 DataFrame（不要修改原始 df）
     提示：df.columns.str.strip().str.lower()
     """
     # TODO: 你的程式碼
-    pass
+    #pass
+    df_new = df.copy()
+    df_new.columns = df.columns.str.strip().str.lower()
+    return df_new
 
 
-def yellow_clean_amount(df):
+def yellow_clean_amount(df:pd.DataFrame ):
     """
     清理 amount 欄位：移除 '$' 和 ',' 符號，轉為 float
     假設欄位名稱已經是小寫的 'amount'
@@ -63,16 +71,20 @@ def yellow_clean_amount(df):
     提示：.str.replace() + .astype(float)
     """
     # TODO: 你的程式碼
-    pass
+    df_new = df.copy()
+    df_new['amount'] = df['amount'].str.strip('$').str.replace(',','').astype(float)
+    #pass
+    return df_new
 
 
-def yellow_drop_duplicates(df):
+def yellow_drop_duplicates(df: pd.DataFrame):
     """
     移除完全重複的列，回傳去重後的 DataFrame
     提示：df.drop_duplicates()
     """
-    # TODO: 你的程式碼
-    pass
+    ## TODO: 你的程式碼
+    #pass
+    return df.drop_duplicates()
 
 
 # ============================================================
@@ -93,4 +105,15 @@ def red_clean_orders(path):
     提示：pd.to_datetime(errors='coerce')
     """
     # TODO: 你的程式碼
-    pass
+    #pass
+    df= pd.read_csv("datasets/ecommerce/orders_raw.csv")
+    df.columns = df.columns.str.strip().str.lower()
+    df['amount'] = df['amount'].str.strip('$').str.replace(',','').astype(float)
+    df['order_date'] = pd.to_datetime(df['order_date'], errors='coerce')
+    df = df.dropna(subset=['order_date', 'amount'])
+    #這個不確定, 先comment
+    df['qty'] = df['qty'].fillna(df['qty'].median)
+    
+    df = df.drop_duplicates()
+    return df
+
