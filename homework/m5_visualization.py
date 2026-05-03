@@ -79,11 +79,15 @@ def yellow_line_region_trend():
     回傳 matplotlib Figure 物件
     提示：分別 groupby 再 plot，或用 sns.lineplot(hue='region')
     """
-    # TODO: 你的程式碼
-    pass
+    df = _load_data()
+    north = df[df['region'] == 'North'].groupby(df['order_date'].dt.month)['amount'].sum()
+    south = df[df['region'] == 'South'].groupby(df['order_date'].dt.month)['amount'].sum()
 
-# graph = yellow_line_region_trend()
-# plt.show()
+    fig = plt.figure()
+    plt.plot(north.index, north.values, label='North')
+    plt.plot(south.index, south.values, label='South')
+    return fig
+
 
 def yellow_box_vip():
     """
@@ -91,8 +95,10 @@ def yellow_box_vip():
     回傳 matplotlib Figure 物件
     提示：sns.boxplot(x='vip_level', y='amount', data=df)
     """
-    # TODO: 你的程式碼
-    pass
+    fig = plt.figure()
+    sns.boxplot(x='vip_level', y='amount', data=_load_data())
+    return fig
+
 
 
 def yellow_scatter_price_amount():
@@ -101,8 +107,11 @@ def yellow_scatter_price_amount():
     回傳 matplotlib Figure 物件
     提示：plt.scatter() 或 sns.scatterplot()
     """
-    # TODO: 你的程式碼
-    pass
+    fig = plt.figure()
+    sns.scatterplot(x='unit_price', y='amount', data=_load_data())
+    return fig
+    
+
 
 
 # ============================================================
@@ -120,5 +129,24 @@ def red_category_dashboard(category="Electronics"):
     回傳 matplotlib Figure 物件
     提示：fig, axes = plt.subplots(2, 2, figsize=(14, 10))
     """
-    # TODO: 你的程式碼
-    pass
+    df = _load_data()
+    df2 = df[df['category'] == category]
+
+    fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+    # 左上：該類別月營收趨勢 (折線圖)
+    monthly = df2.groupby(df2['order_date'].dt.month)['amount'].sum()
+    axes[0, 0].plot(monthly.index, monthly.values)
+
+    # 右上：該類別各地區營收 (長條圖)
+    region = df2.groupby('region')['amount'].sum()
+    axes[0, 1].bar(region.index, region.values)
+
+    # 左下：該類別 Top 5 商品營收 (水平長條圖)
+    top5 = df2.groupby('product_name')['amount'].sum().nlargest(5).sort_values(ascending=True)
+    axes[1, 0].barh(top5.index, top5.values)
+
+    # 右下：該類別訂單金額分佈 (直方圖)
+    axes[1, 1].hist(df2['amount'])
+
+    return fig
+

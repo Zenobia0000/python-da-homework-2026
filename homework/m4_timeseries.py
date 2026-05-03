@@ -27,15 +27,9 @@ def green_avg_by_month():
     回傳 Series（index=月份 1~12, values=平均金額）
     提示：df['order_date'].dt.month
     """
-<<<<<<< Updated upstream
-    df.groupby()["amount"]
-    output = pd.Series([value for value in df['order_date'].dt.month.values], index= [m for m in df['order_date'].dt.month])
-    return output
-
-print(green_avg_by_month())
-=======
     return df.groupby(df['order_date'].dt.month)['amount'].mean()
->>>>>>> Stashed changes
+
+
 
 def green_top3_dates():
     """
