@@ -11,6 +11,11 @@ M3 Pandas 進階：merge / groupby / RFM — 課後作業
 """
 import pandas as pd
 
+df = (
+        pd.read_csv("datasets/ecommerce/orders_clean.csv")
+        .merge(pd.read_csv("datasets/ecommerce/customers.csv"), on='customer_id', how='left')
+        .merge(pd.read_csv("datasets/ecommerce/products.csv"),  on='product_id',  how='left')
+)
 
 # ============================================================
 # 🟢 送分題（每題 10 分，共 30 分）
@@ -23,20 +28,20 @@ def green_load_and_merge():
     - 再 LEFT JOIN products.csv ON product_id
     提示：pd.merge(how='left')
     """
-    # TODO: 你的程式碼
-    pass
-
+    df = (
+        pd.read_csv("datasets/ecommerce/orders_clean.csv")
+        .merge(pd.read_csv("datasets/ecommerce/customers.csv"), on='customer_id', how='left')
+        .merge(pd.read_csv("datasets/ecommerce/products.csv"),  on='product_id',  how='left')
+    )
+    return df
 
 def green_row_count(df):
     """回傳 DataFrame 的列數 (int)"""
-    # TODO: 你的程式碼
-    pass
-
+    return len(df) # df.shape[0]
 
 def green_column_list(df):
     """回傳 DataFrame 的所有欄位名稱 (list)"""
-    # TODO: 你的程式碼
-    pass
+    return df.columns.to_list() # list(df.columns)
 
 
 # ============================================================
@@ -49,8 +54,8 @@ def yellow_top_category(df):
     回傳該類別名稱 (str)
     提示：groupby('category')['amount'].sum()
     """
-    # TODO: 你的程式碼
-    pass
+    return df.groupby('category')['amount'].sum().sort_values(ascending=False).index[0] #idxmax()
+
 
 
 def yellow_gold_vip_stats(df):
@@ -59,8 +64,8 @@ def yellow_gold_vip_stats(df):
     回傳 tuple: (訂單數 int, 總金額 float)
     提示：df[df['vip_level'] == 'Gold']
     """
-    # TODO: 你的程式碼
-    pass
+    return (df[df["vip_level"] == "Gold"].shape[0], df[df["vip_level"] == "Gold"]["amount"].sum())
+
 
 
 def yellow_region_avg_amount(df):
@@ -69,8 +74,7 @@ def yellow_region_avg_amount(df):
     回傳 Series（index=region, values=平均金額）
     提示：groupby('region')['amount'].mean()
     """
-    # TODO: 你的程式碼
-    pass
+    return df.groupby('region')['amount'].mean()
 
 
 # ============================================================
@@ -93,5 +97,15 @@ def red_rfm_top5(df):
 
     提示：groupby('customer_id').agg(...)
     """
-    # TODO: 你的程式碼
-    pass
+
+    df["order_date"] = pd.to_datetime(df["order_date"], errors="coerce")
+    r =  df.groupby("customer_id")["order_date"].max()
+    f = df.groupby("customer_id")["order_id"].count()
+    m = df.groupby("customer_id")["amount"].sum()
+    names = df.groupby("customer_id")["customer_name"].first()
+    df2 = pd.DataFrame({"customer_name":names, "R":r, "F":f, "M":m}).reset_index()
+
+    # df2 = df.groupby("customer_id").agg(customer_name=("customer_name", "first"), R=("order_date", "max"),  F=("order_id", "count"),  M=("amount", "sum")).reset_index()
+
+    return df2.sort_values("M", ascending=False).head(5)
+
