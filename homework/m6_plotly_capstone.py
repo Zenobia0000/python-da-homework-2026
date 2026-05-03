@@ -71,7 +71,9 @@ def green_plotly_pie():
     df = pd.read_csv('../datasets/ecommerce/orders_enriched.csv',
     parse_dates=['order_date'],)
     vip_orders = df.groupby('vip_level', as_index=False)['order_id'].count()
-    fig = px.pie(vip_orders,name='vip_level',values='order_id')
+    fig = px.pie(vip_orders,names='vip_level',values='order_id',hole=0.2,title='Percentage of orders by VIP tier')
+    fig.update_traces(textinfo='percent+label')
+    return fig
 
 
 # ============================================================

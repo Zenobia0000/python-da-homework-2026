@@ -34,9 +34,6 @@ def green_load_and_merge():
 
     return orders
 
-    # orders.merge(customers,on='customer_id',how='left')
-    green_load_and_merge()
-
 
 
 

@@ -118,4 +118,3 @@ def red_monthly_report():
     report['avg_order_value'] = report['revenue'] / report['order_count']
     report['revenue_growth'] = report['revenue'].pct_change() * 100
     return report
-print(red_monthly_report())

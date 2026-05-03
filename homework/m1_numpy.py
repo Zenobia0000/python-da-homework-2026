@@ -21,8 +21,6 @@ def green_mean():
     # TODO: 你的程式碼
     arr = np.array([10,20,30,40,50])
     return arr.mean()
-result = green_mean()
-print(result)
 
 
 def green_double():
@@ -30,8 +28,6 @@ def green_double():
     # TODO: 你的程式碼
     arr = np.array([10,20,30,40,50])
     return arr * 2
-result2 = green_double()
-print(result2)
 
 
 def green_filter():
@@ -39,8 +35,6 @@ def green_filter():
     # TODO: 你的程式碼
     arr = np.array([10,20,30,40,50])
     return arr[arr > 25]
-result3 = green_filter()
-print(result3)
 
 # ============================================================
 # 🟡 核心題（每題 15 分，共 45 分）
