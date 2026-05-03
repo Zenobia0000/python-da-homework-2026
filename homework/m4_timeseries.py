@@ -23,25 +23,26 @@ print(df.head())
 # 🟢 送分題（每題 10 分，共 30 分）
 # ============================================================
 
-def green_avg_by_month(df):
+def green_avg_by_month():
     """
     計算每個月份 (1~12) 的平均訂單金額
     回傳 Series（index=月份 1~12, values=平均金額）
     提示：df['order_date'].dt.month
     """
-    df['month'] = df['order_date'].dt.month
-    return df.groupby('month')['amount'].mean()
+    df = _load_data()
+    df['order_date'] = pd.to_datetime(df['order_date'])
+    return df.groupby(df['order_date'].dt.month)['amount'].mean()
   
 
-def green_top3_dates(df):
+def green_top3_dates():
     """
     找出訂單數最多的前 3 個日期
     回傳 Series（index=日期, values=訂單數, 由多到少排序）
     提示：value_counts().head(3)
     """
-
+    df = _load_data()
+    df['order_date'] = pd.to_datetime(df['order_date'])
     return df['order_date'].value_counts().head(3)
-
 
 def green_date_range():
     """
