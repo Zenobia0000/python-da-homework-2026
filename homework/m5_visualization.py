@@ -14,7 +14,7 @@ import seaborn as sns
 
 def _load_data():
     """輔助函式：讀取資料"""
-    return pd.read_csv("datasets/ecommerce/orders_enriched.csv",
+    return pd.read_csv("../datasets/ecommerce/orders_enriched.csv",
                        parse_dates=["order_date"])
 
 
@@ -29,6 +29,11 @@ def green_bar_category():
     提示：sns.countplot 或 value_counts().plot.bar()
     """
     # TODO: 你的程式碼
+    df = _load_data()
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.countplot(data=df, x='category', ax=ax)
+    ax.set_title("Order Count by Category")
+    return fig
     pass
 
 
@@ -39,6 +44,11 @@ def green_hist_amount():
     提示：sns.histplot(bins=20) 或 plt.hist()
     """
     # TODO: 你的程式碼
+    df = _load_data()
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.histplot(data=df, x='amount', bins=20, ax=ax)
+    ax.set_title("Distribution of Order Amounts")
+    return fig
     pass
 
 
@@ -51,6 +61,13 @@ def green_set_labels():
     回傳 matplotlib Figure 物件
     """
     # TODO: 你的程式碼
+    data = {'A': 100, 'B': 200, 'C': 300}
+    fig, ax = plt.subplots()
+    ax.bar(data.keys(), data.values())
+    ax.set_title("Simple Bar Chart")
+    ax.set_xlabel("Category")
+    ax.set_ylabel("Values")
+    return fig
     pass
 
 
@@ -68,6 +85,15 @@ def yellow_line_region_trend():
     提示：分別 groupby 再 plot，或用 sns.lineplot(hue='region')
     """
     # TODO: 你的程式碼
+    df = _load_data()
+    target_regions = df[df['region'].isin(['North', 'South'])]
+    trend_data = target_regions.groupby([target_regions['order_date'].dt.month, 'region'])['amount'].sum().unstack()
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.lineplot(data=target_regions, x=target_regions['order_date'].dt.month, y='amount', hue='region', estimator='sum', ax=ax)
+    ax.set_title("Monthly Revenue Trend: North vs South")
+    ax.set_xlabel("Month")
+    ax.set_ylabel("Total Revenue")
+    return fig
     pass
 
 
@@ -78,6 +104,11 @@ def yellow_box_vip():
     提示：sns.boxplot(x='vip_level', y='amount', data=df)
     """
     # TODO: 你的程式碼
+    df = _load_data()
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.boxplot(data=df, x='vip_level', y='amount', ax=ax)
+    ax.set_title("Order Amount Distribution by VIP Level")
+    return fig
     pass
 
 
@@ -88,6 +119,11 @@ def yellow_scatter_price_amount():
     提示：plt.scatter() 或 sns.scatterplot()
     """
     # TODO: 你的程式碼
+    df = _load_data()
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.scatterplot(data=df, x='unit_price', y='amount', ax=ax)
+    ax.set_title("Unit Price vs Order Amount")
+    return fig
     pass
 
 
@@ -107,4 +143,26 @@ def red_category_dashboard(category="Electronics"):
     提示：fig, axes = plt.subplots(2, 2, figsize=(14, 10))
     """
     # TODO: 你的程式碼
+    df = _load_data()
+    cat_df = df[df['category'] == category].copy()
+    fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+    fig.suptitle(f"Dashboard: {category}", fontsize=20)
+    monthly_rev = cat_df.set_index('order_date').resample('ME')['amount'].sum()
+    axes[0, 0].plot(monthly_rev.index, monthly_rev.values, marker='o', color='b')
+    axes[0, 0].set_title("Monthly Revenue Trend")
+    axes[0, 0].tick_params(axis='x', rotation=45)
+
+    region_rev = cat_df.groupby('region')['amount'].sum().sort_values(ascending=False)
+    sns.barplot(x=region_rev.index, y=region_rev.values, ax=axes[0, 1])
+    axes[0, 1].set_title("Revenue by Region")
+
+    top5_prod = cat_df.groupby('product_name')['amount'].sum().nlargest(5)
+    sns.barplot(x=top5_prod.values, y=top5_prod.index, ax=axes[1, 0], orient='h')
+    axes[1, 0].set_title("Top 5 Products by Revenue")
+
+    sns.histplot(cat_df['amount'], bins=15, kde=True, ax=axes[1, 1])
+    axes[1, 1].set_title("Order Amount Distribution")
+
+    plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+    return fig
     pass

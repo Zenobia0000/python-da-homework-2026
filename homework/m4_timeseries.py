@@ -11,7 +11,7 @@ import pandas as pd
 
 def _load_data():
     """輔助函式：讀取並解析日期"""
-    df = pd.read_csv("datasets/ecommerce/orders_enriched.csv",
+    df = pd.read_csv("../datasets/ecommerce/orders_enriched.csv",
                      parse_dates=["order_date"])
     return df
 
@@ -27,6 +27,9 @@ def green_avg_by_month():
     提示：df['order_date'].dt.month
     """
     # TODO: 你的程式碼
+    df = _load_data()
+    monthly_avg = df.groupby(df['order_date'].dt.month)['amount'].mean()
+    return monthly_avg
     pass
 
 
@@ -37,6 +40,9 @@ def green_top3_dates():
     提示：value_counts().head(3)
     """
     # TODO: 你的程式碼
+    df = _load_data()
+    date_counts = df['order_date'].value_counts()
+    return date_counts.head(3)
     pass
 
 
@@ -46,6 +52,10 @@ def green_date_range():
     格式為 pandas Timestamp
     """
     # TODO: 你的程式碼
+    df = _load_data()
+    min_date = df['order_date'].min()
+    max_date = df['order_date'].max()
+    return (min_date, max_date)
     pass
 
 
@@ -60,6 +70,9 @@ def yellow_monthly_revenue():
     提示：set_index('order_date').resample('ME')['amount'].sum()
     """
     # TODO: 你的程式碼
+    df = _load_data()
+    monthly_rev = df.set_index('order_date').resample('ME')['amount'].sum()
+    return monthly_rev
     pass
 
 
@@ -71,6 +84,8 @@ def yellow_rolling_avg(monthly_revenue):
     提示：.rolling(window=3).mean()
     """
     # TODO: 你的程式碼
+    rolling_avg = monthly_revenue.rolling(window=3).mean()
+    return rolling_avg
     pass
 
 
@@ -81,6 +96,8 @@ def yellow_category_median(df):
     提示：groupby + median + sort_values
     """
     # TODO: 你的程式碼
+    category_median = df.groupby('category')['amount'].median().sort_values(ascending=False)
+    return category_median
     pass
 
 
@@ -101,4 +118,14 @@ def red_monthly_report():
     提示：resample + agg + pct_change
     """
     # TODO: 你的程式碼
+    df = _load_data()
+    df = df.set_index('order_date')
+    report = df.resample('ME').agg(
+        order_count=('amount', 'count'),
+        revenue=('amount', 'sum'),
+        active_customers=('customer_id', 'nunique')
+    )
+    report['avg_order_value'] = report['revenue'] / report['order_count']
+    report['revenue_growth'] = report['revenue'].pct_change()
+    return report
     pass
