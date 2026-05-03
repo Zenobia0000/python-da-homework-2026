@@ -23,20 +23,26 @@ def green_mean():
     total_sum = np.sum(data)
     average = total_sum / len(data)
     return float(average)
+# green_mean()
 
 
 def green_double():
     """建立 [10, 20, 30, 40, 50]，回傳所有元素乘以 2 的 ndarray"""
     # TODO: 你的程式碼
-    arr = np.array([10, 20, 30, 40, 50])
-    return arr*2
+    data = np.array([10, 20, 30, 40, 50])
+    total_sum = data * 2
+    return total_sum
+# green_double()
 
 
 def green_filter():
     """建立 [10, 20, 30, 40, 50]，回傳大於 25 的元素 (ndarray)"""
     # TODO: 你的程式碼
-    arr = np.array([10, 20, 30, 40, 50])
-    return arr[arr > 25]
+    data = np.array([10, 20, 30, 40, 50])
+    mask = data > 25
+    result = data[mask]
+    return result
+# green_filter()
 
 
 # ============================================================
@@ -44,12 +50,19 @@ def green_filter():
 # 以下函式會接收從 products.csv 讀出的 prices, stocks 陣列
 # ============================================================
 
+DATA = './datasets/ecommerce/products.csv'
+
 def yellow_expensive_count(prices):
     """回傳單價 > 1000 的商品數量 (int)"""
     # TODO: 你的程式碼
-    prices_arr = np.array(prices)
-    return len(prices_arr[prices_arr > 1000])
+    mask_expensive = prices > 1000
+    num_expensive = mask_expensive.sum()
+    return int(num_expensive)
+prices = np.genfromtxt(DATA, delimiter=',', skip_header=1, usecols=3)
+# print(f'單價 > 1000 的商品數＝{yellow_expensive_count(prices)}個')
 
+
+DATA = './datasets/ecommerce/products.csv'
 
 def yellow_top3_stock_indices(stocks):
     """
@@ -57,10 +70,15 @@ def yellow_top3_stock_indices(stocks):
     提示：np.argsort
     """
     # TODO: 你的程式碼
-    stocks_arr = np.array(stocks)
-    stocks_arr = np.argsort(stocks)[::-1]
-    return stocks_arr[:3]
+    sorted_idx = np.argsort(stocks)
+    top3_idx = sorted_idx[-3:][::-1]
+    return top3_idx
+stocks = np.genfromtxt(DATA, delimiter=',', skip_header=1, usecols=4)
+top3_idx = yellow_top3_stock_indices(stocks)
+# print(f'庫存前3名索引＝{top3_idx}')
 
+
+DATA = './datasets/ecommerce/products.csv'
 
 def yellow_restock_cost(prices, stocks):
     """
@@ -68,8 +86,13 @@ def yellow_restock_cost(prices, stocks):
     提示：布林遮罩 + .sum()
     """
     # TODO: 你的程式碼
-    total = prices[prices < 500] *50
-    return total.sum()
+    mask_cheap = prices < 500
+    cheap_prices = prices[mask_cheap]
+    total_cost = (cheap_prices * 50).sum()
+    # print(f'便宜商品數量 ＝{mask_cheap.sum()}項')
+    # print(f'總進貨成本 ＝ NT$ {total_cost:,.0f}')
+    return total_cost
+# print(result)
 
 
 # ============================================================
@@ -86,8 +109,3 @@ def red_double11_prices(prices, stocks):
     提示：np.where 可以巢狀使用
     """
     # TODO: 你的程式碼
-    prices_07 = prices[stocks >= 100] * 0.7
-    prices_09 = prices[(stocks >= 20) & (stocks < 100)] * 0.9
-    prices_original = prices[stocks < 20]
-    final_price = np.concatenate([prices_original, prices_07, prices_09])
-    return final_price
