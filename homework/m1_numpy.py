@@ -24,7 +24,6 @@ def green_mean():
     average = total_sum / len(data)
     return float(average)
 print(green_mean())
-    pass
 
 
 def green_double():
@@ -34,7 +33,6 @@ def green_double():
     total_sum = data * 2
     return total_sum
 print(green_double)
-    pass
 
 
 def green_filter():
@@ -45,7 +43,6 @@ def green_filter():
     result = data[mask]
     return result
 print(green_filter())
-    pass
 
 
 # ============================================================
@@ -63,7 +60,6 @@ def yellow_expensive_count(prices):
     return int(num_expensive)
 prices = np.genfromtxt(DATA, delimiter=',', skip_header=1, usecols=3)
 print(f'單價 > 1000 的商品數＝{yellow_expensive_count(prices)}個')
-    pass
 
 
 DATA = './datasets/ecommerce/products.csv'
@@ -80,7 +76,6 @@ def yellow_top3_stock_indices(stocks):
 stocks = np.genfromtxt(DATA, delimiter=',', skip_header=1, usecols=4)
 top3_idx = yellow_top3_stock_indices(stocks)
 print(f'庫存前3名索引＝{top3_idx}')
-    pass
 
 
 DATA = './datasets/ecommerce/products.csv'
@@ -99,7 +94,6 @@ def yellow_restock_cost(prices, stocks):
     return total_cost
 result = yellow_restock_cost(prices, stocks)
 print(result)
-    pass
 
 
 # ============================================================
@@ -116,4 +110,3 @@ def red_double11_prices(prices, stocks):
     提示：np.where 可以巢狀使用
     """
     # TODO: 你的程式碼
-    pass

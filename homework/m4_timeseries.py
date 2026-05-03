@@ -19,7 +19,6 @@ def _load_data():
 # ============================================================
 # 🟢 送分題（每題 10 分，共 30 分）
 # ============================================================
-import pandas as pd
 def green_avg_by_month(df):
     """
     計算每個月份 (1~12) 的平均訂單金額
@@ -31,9 +30,7 @@ def green_avg_by_month(df):
     return avg_by_month
 green_avg_by_month(df)
 
-    pass
 
-import pandas as pd
 def green_top3_dates():
     """
     找出訂單數最多的前 3 個日期
@@ -44,9 +41,7 @@ def green_top3_dates():
     top3_dates = df['order_date'].dt.date.value_counts().head(3)
     return top3_dates
 green_top3_dates()
-    pass
 
-import pandas as pd
 import numpy as np
 df = pd.read_csv('./datasets/ecommerce/orders_enriched.csv')
 def green_date_range():
@@ -63,13 +58,11 @@ def green_date_range():
     print('日期範圍:',df['order_date'].min(),'~',df['order_date'].max())
     return (df['order_date'].min(),df['order_date'].max())
 green_date_range()
-    pass
 
 
 # ============================================================
 # 🟡 核心題（每題 15 分，共 45 分）
 # ============================================================
-import pandas as pd
 import numpy as np
 def yellow_monthly_revenue():
     """
@@ -82,9 +75,7 @@ def yellow_monthly_revenue():
     monthly_orders = ts['amount'].resample('ME').sum()
     return monthly_orders
 yellow_monthly_revenue()
-    pass
 
-import pandas as pd
 import numpy as np
 def yellow_rolling_avg():
     ts = df.set_index('order_date').sort_index()
@@ -102,9 +93,7 @@ def yellow_rolling_avg():
     })
     return monthly_orders_ma3
 yellow_rolling_avg()
-    pass
 
-import pandas as pd
 import numpy as np
 def yellow_category_median(df):
     """
@@ -121,7 +110,6 @@ def yellow_category_median(df):
     )
     return medias_by_cat
 yellow_category_median(df)
-    pass
 
 
 # ============================================================

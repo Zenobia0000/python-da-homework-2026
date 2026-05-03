@@ -21,11 +21,7 @@ def _load_data():
 # ============================================================
 # 🟢 送分題（每題 10 分，共 30 分）
 # ============================================================
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-import pandas as pd
-import seaborn as sns
+
 def green_bar_category():
     """
     畫出每個商品類別 (category) 的訂單數長條圖
@@ -51,13 +47,8 @@ def green_bar_category():
     plt.tight_layout()
     return fig
 green_bar_category()
-    pass
 
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-import pandas as pd
-import seaborn as sns
+
 def green_hist_amount():
     """
     畫出訂單金額 (amount) 的分佈直方圖，分 20 個 bin
@@ -73,13 +64,7 @@ def green_hist_amount():
     plt.tight_layout()
     return fig
 green_hist_amount()
-    pass
 
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-import pandas as pd
-import seaborn as sns
 def green_set_labels():
     """
     建立一個簡單的長條圖（內容不限），但必須設定：
@@ -102,17 +87,11 @@ def green_set_labels():
         plt.tight_layout()
         return fig
 green_set_labels()
-    pass
 
 
 # ============================================================
 # 🟡 核心題（每題 15 分，共 45 分）
 # ============================================================
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-import pandas as pd
-import seaborn as sns
 def yellow_line_region_trend():
     """
     畫折線圖：比較 North 和 South 兩個地區的月營收趨勢
@@ -145,13 +124,8 @@ def yellow_line_region_trend():
     plt.tight_layout
     return fig
 yellow_line_region_trend()
-    pass
 
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-import pandas as pd
-import seaborn as sns
+
 def yellow_box_vip():
     """
     畫箱形圖：比較不同 VIP 等級 (vip_level) 的訂單金額分佈
@@ -174,13 +148,7 @@ def yellow_box_vip():
     plt.tight_layout()
     return fig
 yellow_box_vip()
-    pass
 
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-import pandas as pd
-import seaborn as sns
 def yellow_scatter_price_amount():
     """
     畫散佈圖：X=商品單價 (unit_price)，Y=訂單金額 (amount)
@@ -202,7 +170,6 @@ def yellow_scatter_price_amount():
     plt.tight_layout()
     return fig
 yellow_scatter_price_amount()
-    pass
 
 
 # ============================================================

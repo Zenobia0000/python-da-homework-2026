@@ -15,7 +15,6 @@ import pandas as pd
 # ============================================================
 
 
-import pandas as pd
 import numpy as np
 DATA = './datasets/ecommerce/orders_raw.csv'
 def green_read_csv():
@@ -28,10 +27,8 @@ def green_read_csv():
     return raw
 df = green_read_csv()
 print(df.head())
-    pass
 
 
-import pandas as pd
 import numpy as np
 DATA = './datasets/ecommerce/orders_raw.csv'
 def green_shape(df):
@@ -43,10 +40,8 @@ def green_shape(df):
     return df.shape
 raw = pd.read_csv(DATA)
 print(f'資料型態 =',raw.shape)
-    pass
 
 
-import pandas as pd
 import numpy as np
 DATA = './datasets/ecommerce/orders_raw.csv'
 def green_dtypes(df):
@@ -58,7 +53,6 @@ def green_dtypes(df):
     return df.dtypes
 raw = pd.read_csv(DATA)
 print(f'資料型態 =',raw.dtypes)
-    pass
 
 
 # ============================================================
@@ -66,7 +60,6 @@ print(f'資料型態 =',raw.dtypes)
 # ============================================================
 
 
-import pandas as pd
 import numpy as np
 DATA = './datasets/ecommerce/orders_raw.csv'
 def yellow_clean_columns(df):
@@ -81,10 +74,8 @@ def yellow_clean_columns(df):
 df = pd.read_csv('./datasets/ecommerce/orders_raw.csv')
 df = yellow_clean_columns(df)
 print('清理後欄名：',list(df.columns))
-    pass
 
 
-import pandas as pd
 import numpy as np
 DATA = './datasets/ecommerce/orders_raw.csv'
 def yellow_clean_amount(df):
@@ -106,9 +97,7 @@ def yellow_clean_amount(df):
     return df
 df = yellow_clean_amount(df)
 print('\n清理後 amount 型別:', df['amount'].dtype)
-    pass
 
-import pandas as pd
 import numpy as np
 DATA = './datasets/ecommerce/orders_raw.csv'
 def yellow_drop_duplicates(df):
@@ -122,7 +111,6 @@ def yellow_drop_duplicates(df):
     print('去重後形狀:',df.shape)
     return df
 df = yellow_drop_duplicates(df)
-    pass
 
 
 # ============================================================

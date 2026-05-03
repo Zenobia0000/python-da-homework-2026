@@ -17,7 +17,6 @@ import pandas as pd
 # ============================================================
 
 
-import pandas as pd
 import numpy as np
 DATA = './datasets/ecommerce'
 orders = pd.read_csv(f'{DATA}/orders_clean.csv',parse_dates=['order_date'])
@@ -41,9 +40,7 @@ def green_load_and_merge():
     return full
 df_final = green_load_and_merge()
 df_final.head() 
-    pass
 
-import pandas as pd
 import numpy as np
 DATA = './datasets/ecommerce'
 orders = pd.read_csv(f'{DATA}/orders_clean.csv',parse_dates=['order_date'])
@@ -55,10 +52,8 @@ def green_row_count(df):
 print('orders:' , orders.shape)
 print('customers:', customers.shape)
 print('products:' , products.shape)
-    pass
 
 
-import pandas as pd
 import numpy as np
 DATA = './datasets/ecommerce'
 orders = pd.read_csv(f'{DATA}/orders_clean.csv',parse_dates=['order_date'])
@@ -70,7 +65,6 @@ def green_load_and_merge():
 print('orders:' , list(orders.columns))
 print('customers:', list(customers.columns))
 print('products:' , list(products.columns))
-    pass
 
 
 # ============================================================
@@ -95,7 +89,6 @@ def yellow_top_category(df):
     return top_cat
 result = yellow_top_category(df_final)
 print(result)
-    pass
 
 
 def yellow_gold_vip_stats(df):
@@ -113,7 +106,6 @@ def yellow_gold_vip_stats(df):
     print(f'總金額:{gold_stat['sum']:,.0f}')
     return (order_count, total_amount)
 result = yellow_gold_vip_stats(df_final)
-    pass
 
 
 def yellow_region_avg_amount(df):
@@ -133,7 +125,6 @@ def yellow_region_avg_amount(df):
     return region_mean
 result_series = yellow_region_avg_amount(df_final)
     
-    pass
 
 
 # ============================================================
