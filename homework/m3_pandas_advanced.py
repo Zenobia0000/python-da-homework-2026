@@ -24,9 +24,16 @@ def green_load_and_merge():
     提示：pd.merge(how='left')
     """
     # TODO: 你的程式碼
-    pass
-
-
+    path_prefix = r"C:\Users\W11 HOME\Desktop\python-da-homework-2026\datasets\ecommerce/"
+    
+    df_orders = pd.read_csv(path_prefix + "orders_clean.csv")
+    df_customers = pd.read_csv(path_prefix + "customers.csv")
+    df_products = pd.read_csv(path_prefix + "products.csv")
+    merged_df = pd.merge(df_orders, df_customers, on='customer_id', how='left')
+    final_df = pd.merge(merged_df, df_products, on='product_id', how='left')
+    
+    return final_df
+    
 def green_row_count(df):
     """回傳 DataFrame 的列數 (int)"""
     # TODO: 你的程式碼
