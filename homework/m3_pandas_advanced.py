@@ -24,9 +24,9 @@ def green_load_and_merge():
     提示：pd.merge(how='left')
     """
     # TODO: 你的程式碼
-    orders = pd.read_csv("../datasets/ecommerce/orders_clean.csv")
-    customers = pd.read_csv("../datasets/ecommerce/customers.csv")
-    products = pd.read_csv("../datasets/ecommerce/products.csv")
+    orders = pd.read_csv("datasets/ecommerce/orders_clean.csv")
+    customers = pd.read_csv("datasets/ecommerce/customers.csv")
+    products = pd.read_csv("datasets/ecommerce/products.csv")
     df = (
             orders
             .merge(customers, on = 'customer_id', how='left')
@@ -37,9 +37,9 @@ def green_load_and_merge():
 def green_row_count(df):
     """回傳 DataFrame 的列數 (int)"""
     # TODO: 你的程式碼
-    orders = pd.read_csv("../datasets/ecommerce/orders_clean.csv")
-    customers = pd.read_csv("../datasets/ecommerce/customers.csv")
-    products = pd.read_csv("../datasets/ecommerce/products.csv")
+    orders = pd.read_csv("datasets/ecommerce/orders_clean.csv")
+    customers = pd.read_csv("datasets/ecommerce/customers.csv")
+    products = pd.read_csv("datasets/ecommerce/products.csv")
     df = (
             orders
             .merge(customers, on = 'customer_id', how='left')
@@ -51,9 +51,9 @@ def green_row_count(df):
 def green_column_list(df):
     """回傳 DataFrame 的所有欄位名稱 (list)"""
     # TODO: 你的程式碼
-    orders = pd.read_csv("../datasets/ecommerce/orders_clean.csv")
-    customers = pd.read_csv("../datasets/ecommerce/customers.csv")
-    products = pd.read_csv("../datasets/ecommerce/products.csv")
+    orders = pd.read_csv("datasets/ecommerce/orders_clean.csv")
+    customers = pd.read_csv("datasets/ecommerce/customers.csv")
+    products = pd.read_csv("datasets/ecommerce/products.csv")
     df = (
             orders
             .merge(customers, on = 'customer_id', how='left')
@@ -73,9 +73,9 @@ def yellow_top_category(df):
     提示：groupby('category')['amount'].sum()
     """
     # TODO: 你的程式碼
-    orders = pd.read_csv("../datasets/ecommerce/orders_clean.csv")
-    customers = pd.read_csv("../datasets/ecommerce/customers.csv")
-    products = pd.read_csv("../datasets/ecommerce/products.csv")
+    orders = pd.read_csv("datasets/ecommerce/orders_clean.csv")
+    customers = pd.read_csv("datasets/ecommerce/customers.csv")
+    products = pd.read_csv("datasets/ecommerce/products.csv")
     df = (
             orders
             .merge(customers, on = 'customer_id', how='left')
@@ -92,9 +92,9 @@ def yellow_gold_vip_stats(df):
     提示：df[df['vip_level'] == 'Gold']
     """
     # TODO: 你的程式碼
-    orders = pd.read_csv("../datasets/ecommerce/orders_clean.csv")
-    customers = pd.read_csv("../datasets/ecommerce/customers.csv")
-    products = pd.read_csv("../datasets/ecommerce/products.csv")
+    orders = pd.read_csv("datasets/ecommerce/orders_clean.csv")
+    customers = pd.read_csv("datasets/ecommerce/customers.csv")
+    products = pd.read_csv("datasets/ecommerce/products.csv")
     df = (
             orders
             .merge(customers, on = 'customer_id', how='left')
@@ -114,9 +114,9 @@ def yellow_region_avg_amount(df):
     提示：groupby('region')['amount'].mean()
     """
     # TODO: 你的程式碼
-    orders = pd.read_csv("../datasets/ecommerce/orders_clean.csv")
-    customers = pd.read_csv("../datasets/ecommerce/customers.csv")
-    products = pd.read_csv("../datasets/ecommerce/products.csv")
+    orders = pd.read_csv("datasets/ecommerce/orders_clean.csv")
+    customers = pd.read_csv("datasets/ecommerce/customers.csv")
+    products = pd.read_csv("datasets/ecommerce/products.csv")
     df = (
             orders
             .merge(customers, on = 'customer_id', how='left')
@@ -147,9 +147,9 @@ def red_rfm_top5(df):
     提示：groupby('customer_id').agg(...)
     """
     # TODO: 你的程式碼
-    orders = pd.read_csv("../datasets/ecommerce/orders_clean.csv")
-    customers = pd.read_csv("../datasets/ecommerce/customers.csv")
-    products = pd.read_csv("../datasets/ecommerce/products.csv")
+    orders = pd.read_csv("datasets/ecommerce/orders_clean.csv")
+    customers = pd.read_csv("datasets/ecommerce/customers.csv")
+    products = pd.read_csv("datasets/ecommerce/products.csv")
     # R = orders.groupby('customer_id')['order_date'].max()
     # F = orders.groupby('customer_id')['order_id'].count()
     # M = orders.groupby('customer_id')['amount'].sum().sort_values(ascending=False).head()
