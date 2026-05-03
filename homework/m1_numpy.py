@@ -41,53 +41,44 @@ def green_filter():
 # 以下函式會接收從 products.csv 讀出的 prices, stocks 陣列
 # ============================================================
 
+# ---------- 載入 products.csv ----------
+DATA_PATH = "datasets/ecommerce/products.csv"
+prices = np.genfromtxt(DATA_PATH, delimiter=",", skip_header=1, usecols=3)
+stocks = np.genfromtxt(DATA_PATH, delimiter=",", skip_header=1, usecols=4)
+
 def yellow_expensive_count(prices):
     """回傳單價 > 1000 的商品數量 (int)"""
-    prices_arr = np.array(prices)
-    gold = prices_arr[prices_arr>1000]
-    
-    return gold
-
-
-
+    return prices[prices>1000].size
 
 
 def yellow_top3_stock_indices(stocks):
-    arr = np.array(stocks)
-    indices = np.argsort(arr)[::-1][:3]
-    top3_values = arr[indices]
-    return  top3_values
-   
-    
-
-# """
-# 回傳庫存最多的前 3 個商品的索引位置 (ndarray, 由大到小排)
-# 提示：np.argsort
-# """
-    
+    """
+    回傳庫存最多的前 3 個商品的索引位置 (ndarray, 由大到小排)
+    提示：np.argsort
+    """
+    return np.argsort(stocks)[::-1][:3]
 
 
-# def yellow_restock_cost(prices, stocks):
-# """
-# 單價 < 500 的商品，每種各進貨 50 個，回傳總花費 (float/int)
-# 提示：布林遮罩 + .sum()
-# """
-    # TODO: 你的程式碼
-# pass
+def yellow_restock_cost(prices, stocks):
+    """
+    單價 < 500 的商品，每種各進貨 50 個，回傳總花費 (float/int)
+    提示：布林遮罩 + .sum()
+    """
+    return (prices[prices < 500] * 50).sum()
 
 
 # ============================================================
 # 🔴 挑戰題（25 分）
 # ============================================================
 
-# def red_double11_prices(prices, stocks):
-#     """
-#     雙 11 定價規則（必須向量化，不能用 for-loop）：
-#     - 庫存 >= 100：打 7 折
-#     - 庫存 20~99：打 9 折
-#     - 庫存 < 20：原價
-#     回傳每個商品的雙 11 售價 (ndarray)
-#     提示：np.where 可以巢狀使用
-#     """
-#     # TODO: 你的程式碼
-#     pass
+def red_double11_prices(prices, stocks):
+    """
+    雙 11 定價規則（必須向量化，不能用 for-loop）：
+    - 庫存 >= 100：打 7 折
+    - 庫存 20~99：打 9 折
+    - 庫存 < 20：原價
+    回傳每個商品的雙 11 售價 (ndarray)
+    提示：np.where 可以巢狀使用
+    """
+    return np.where(stocks >= 100, prices * 0.7, 
+             np.where((stocks >= 20) & (stocks <= 99), prices * 0.9, prices))
