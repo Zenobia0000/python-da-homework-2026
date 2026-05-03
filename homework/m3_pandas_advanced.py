@@ -11,10 +11,6 @@ M3 Pandas 進階：merge / groupby / RFM — 課後作業
 """
 import pandas as pd
 
-DATA = '../datasets/ecommerce'
-orders = pd.read_csv(f'{DATA}/orders_clean.csv', parse_dates=['order_date'])
-customers = pd.read_csv(f'{DATA}/customers.csv')
-products = pd.read_csv(f'{DATA}/products.csv')
 
 # ============================================================
 # 🟢 送分題（每題 10 分，共 30 分）
@@ -28,48 +24,42 @@ def green_load_and_merge():
     提示：pd.merge(how='left')
     """
     # TODO: 你的程式碼
-    DATA = '../datasets/ecommerce'
-    orders = pd.read_csv(f'{DATA}/orders_clean.csv', parse_dates=['order_date'])
-    customers = pd.read_csv(f'{DATA}/customers.csv')
-    products = pd.read_csv(f'{DATA}/products.csv')
-    
+    orders = pd.read_csv("datasets/ecommerce/orders_clean.csv")
+    customers = pd.read_csv("datasets/ecommerce/customers.csv")
+    products = pd.read_csv("datasets/ecommerce/products.csv")
     df = (
-    orders
-    .merge(customers, on='customer_id', how='left')
-    .merge(products,  on='product_id',  how='left'))
+            orders
+            .merge(customers, on = 'customer_id', how='left')
+            .merge(products, on = 'product_id', how='left')
+    )
     return df
-
 
 def green_row_count(df):
     """回傳 DataFrame 的列數 (int)"""
     # TODO: 你的程式碼
-    DATA = '../datasets/ecommerce'
-    orders = pd.read_csv(f'{DATA}/orders_clean.csv', parse_dates=['order_date'])
-    customers = pd.read_csv(f'{DATA}/customers.csv')
-    products = pd.read_csv(f'{DATA}/products.csv')
-    
+    orders = pd.read_csv("datasets/ecommerce/orders_clean.csv")
+    customers = pd.read_csv("datasets/ecommerce/customers.csv")
+    products = pd.read_csv("datasets/ecommerce/products.csv")
     df = (
-    orders
-    .merge(customers, on='customer_id', how='left')
-    .merge(products,  on='product_id',  how='left'))
-
+            orders
+            .merge(customers, on = 'customer_id', how='left')
+            .merge(products, on = 'product_id', how='left')
+    )
     return df.shape[0]
 
 
 def green_column_list(df):
     """回傳 DataFrame 的所有欄位名稱 (list)"""
     # TODO: 你的程式碼
-    DATA = '../datasets/ecommerce'
-    orders = pd.read_csv(f'{DATA}/orders_clean.csv', parse_dates=['order_date'])
-    customers = pd.read_csv(f'{DATA}/customers.csv')
-    products = pd.read_csv(f'{DATA}/products.csv')
-    
+    orders = pd.read_csv("datasets/ecommerce/orders_clean.csv")
+    customers = pd.read_csv("datasets/ecommerce/customers.csv")
+    products = pd.read_csv("datasets/ecommerce/products.csv")
     df = (
-    orders
-    .merge(customers, on='customer_id', how='left')
-    .merge(products,  on='product_id',  how='left'))
-
-    return df.columns 
+            orders
+            .merge(customers, on = 'customer_id', how='left')
+            .merge(products, on = 'product_id', how='left')
+    )
+    return df.columns
 
 
 # ============================================================
@@ -83,19 +73,9 @@ def yellow_top_category(df):
     提示：groupby('category')['amount'].sum()
     """
     # TODO: 你的程式碼
-    DATA = '../datasets/ecommerce'
-    orders = pd.read_csv(f'{DATA}/orders_clean.csv', parse_dates=['order_date'])
-    customers = pd.read_csv(f'{DATA}/customers.csv')
-    products = pd.read_csv(f'{DATA}/products.csv')
-    
-    df = (
-    orders
-    .merge(customers, on='customer_id', how='left')
-    .merge(products,  on='product_id',  how='left'))
 
-    products_hight = df.groupby('category')['amount'].sum().sort_values(ascending=False).head(1)
-
-    return products_hight
+    amount = df.groupby('category')['amount'].sum().sort_values(ascending=False).head(1)
+    return amount
 
 
 def yellow_gold_vip_stats(df):
@@ -105,21 +85,12 @@ def yellow_gold_vip_stats(df):
     提示：df[df['vip_level'] == 'Gold']
     """
     # TODO: 你的程式碼
-    DATA = '../datasets/ecommerce'
-    orders = pd.read_csv(f'{DATA}/orders_clean.csv', parse_dates=['order_date'])
-    customers = pd.read_csv(f'{DATA}/customers.csv')
-    products = pd.read_csv(f'{DATA}/products.csv')
-    
-    df = (
-    orders
-    .merge(customers, on='customer_id', how='left')
-    .merge(products,  on='product_id',  how='left'))
 
-    goldvip = df[df['vip_level'] == 'Gold']
-    gold_order = len(goldvip['order_id'])
-    price_total = float(goldvip["amount"].sum())
-    total = (gold_order,price_total)
-    return total
+    vip = df[df['vip_level'] == 'Gold']
+    vip_sum = len(vip['order_id'])
+    vip_amount = float(vip['amount'].sum())
+    Gold_Vip = (vip_sum, vip_amount)
+    return Gold_Vip
 
 
 def yellow_region_avg_amount(df):
@@ -129,19 +100,10 @@ def yellow_region_avg_amount(df):
     提示：groupby('region')['amount'].mean()
     """
     # TODO: 你的程式碼
-    DATA = '../datasets/ecommerce'
-    orders = pd.read_csv(f'{DATA}/orders_clean.csv', parse_dates=['order_date'])
-    customers = pd.read_csv(f'{DATA}/customers.csv')
-    products = pd.read_csv(f'{DATA}/products.csv')
-    
-    df = (
-    orders
-    .merge(customers, on='customer_id', how='left')
-    .merge(products,  on='product_id',  how='left'))
 
-    region_rev = df.groupby('region')['amount'].mean()
+    Series = df.groupby('region')['amount'].mean()
+    return Series
 
-    return region_rev
 
 # ============================================================
 # 🔴 挑戰題（25 分）
@@ -164,24 +126,38 @@ def red_rfm_top5(df):
     提示：groupby('customer_id').agg(...)
     """
     # TODO: 你的程式碼
-    rfm = (
+    orders = pd.read_csv("datasets/ecommerce/orders_clean.csv")
+    customers = pd.read_csv("datasets/ecommerce/customers.csv")
+    products = pd.read_csv("datasets/ecommerce/products.csv")
+    # R = orders.groupby('customer_id')['order_date'].max()
+    # F = orders.groupby('customer_id')['order_id'].count()
+    # M = orders.groupby('customer_id')['amount'].sum().sort_values(ascending=False).head()
+    # df = (
+    #             orders
+    #             .merge(customers, on = 'customer_id', how='left')
+    #             .merge(products, on = 'product_id', how='left')
+    #     )
+    RFM = (
     orders.groupby('customer_id')
-          .agg(
-              R=('order_date', 'max'),
-              F=('order_id',   'count'),
-              M=('amount',     'sum'),
-          )
-          .reset_index())
-   
-    rfm_named = rfm.merge(
+    .agg(
+        recency = ('order_date', 'max'),
+        frequency = ('order_id', 'count'),
+        monetary = ('amount', 'sum'),
+    )
+    .reset_index()
+)
+    rfm_named = RFM.merge(
     customers[['customer_id', 'customer_name']],
-    on='customer_id',
-    how='left',)
+    on = 'customer_id',
+    how='left',
+)
 
-    top5 = (
+    final_5 = (
     rfm_named
-    .sort_values('M', ascending=False)
+    .sort_values("M", ascending=False)
     .head(5)
     .reset_index(drop=True)
-    [['customer_id', 'customer_name', 'R', 'F', 'M']])
-    return top5
+    [['customer_id', 'customer_name', 'R', 'F', 'M']]
+)
+
+    return final_5

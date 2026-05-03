@@ -34,7 +34,7 @@ def green_filter():
     """建立 [10, 20, 30, 40, 50]，回傳大於 25 的元素 (ndarray)"""
     # TODO: 你的程式碼
     arr = np.array([10, 20, 30, 40, 50])
-    return arr[arr >25]
+    return arr[arr > 25]
 
 
 # ============================================================
@@ -45,9 +45,8 @@ def green_filter():
 def yellow_expensive_count(prices):
     """回傳單價 > 1000 的商品數量 (int)"""
     # TODO: 你的程式碼
-    DATA = '../datasets/ecommerce/products.csv'
-    prices = np.genfromtxt(DATA, delimiter=',', skip_header=1, usecols=3)
-    return len(prices[prices > 1000])
+    prices_arr = np.array(prices)
+    return len(prices_arr[prices_arr > 1000])
 
 
 def yellow_top3_stock_indices(stocks):
@@ -56,10 +55,9 @@ def yellow_top3_stock_indices(stocks):
     提示：np.argsort
     """
     # TODO: 你的程式碼
-    DATA = '../datasets/ecommerce/products.csv'
-    stocks = np.genfromtxt(DATA, delimiter=',', skip_header=1, usecols=4)
-    stock_max = np.argsort(stocks)
-    return stock_max[:3]
+    stocks_arr = np.array(stocks)
+    stocks_arr = np.argsort(stocks)[::-1]
+    return stocks_arr[:3]
 
 
 def yellow_restock_cost(prices, stocks):
@@ -68,9 +66,7 @@ def yellow_restock_cost(prices, stocks):
     提示：布林遮罩 + .sum()
     """
     # TODO: 你的程式碼
-    DATA = '../datasets/ecommerce/products.csv'
-    prices = np.genfromtxt(DATA, delimiter=',', skip_header=1, usecols=3)  
-    total = prices[prices<500] * 50
+    total = prices[prices < 500] *50
     return total.sum()
 
 
@@ -88,13 +84,8 @@ def red_double11_prices(prices, stocks):
     提示：np.where 可以巢狀使用
     """
     # TODO: 你的程式碼
-    DATA = '../datasets/ecommerce/products.csv'
-    prices = np.genfromtxt(DATA, delimiter=',', skip_header=1, usecols=3)  
-    stocks = np.genfromtxt(DATA, delimiter=',', skip_header=1, usecols=4)
     prices_07 = prices[stocks >= 100] * 0.7
-    prices_09 = prices[(stocks >= 20) & (stocks <= 99)] * 0.9
+    prices_09 = prices[(stocks >= 20) & (stocks < 100)] * 0.9
     prices_original = prices[stocks < 20]
-
-    final_price = np.concatenate([prices_07, prices_09, prices_original])
-
+    final_price = np.concatenate([prices_original, prices_07, prices_09])
     return final_price

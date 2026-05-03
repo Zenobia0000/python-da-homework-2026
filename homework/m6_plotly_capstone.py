@@ -25,9 +25,15 @@ def green_plotly_bar():
     回傳 plotly Figure 物件
     提示：px.bar()
     """
-    df = pd.read_csv('datasets/ecommerce/orders_enriched.csv')
-    category_revenue = df.groupby('category')['amount'].sum().reset_index()
-    fig = px.bar(category_revenue, x='category', y='amount', title='各商品類別總營收')
+    # TODO: 你的程式碼
+    df = pd.read_csv(
+    'datasets/ecommerce/orders_enriched.csv',
+    parse_dates=['order_date'],)
+    region_rev = df.groupby('category', as_index=False)['amount'].sum().sort_values('amount', ascending=False)
+    fig = px.bar(region_rev, x='category', y='amount', text='amount',
+             color='category', title='Revenue by Category')
+    fig.update_traces(texttemplate='%{text:,.0f}', textposition='outside')
+    fig.update_layout(height=400, showlegend=False)
     return fig
 
 
@@ -38,11 +44,16 @@ def green_plotly_line():
     回傳 plotly Figure 物件
     提示：先 groupby 月份算總營收，再 px.line()
     """
-    df = pd.read_csv('datasets/ecommerce/orders_enriched.csv')
-    df['order_date'] = pd.to_datetime(df['order_date'])
+    # TODO: 你的程式碼
+    df = pd.read_csv(
+    'datasets/ecommerce/orders_enriched.csv',
+    parse_dates=['order_date'],)
     df['month'] = df['order_date'].dt.to_period('M').astype(str)
-    monthly_revenue = df.groupby('month')['amount'].sum().reset_index()
-    fig = px.line(monthly_revenue, x='month', y='amount', title='月營收趨勢')
+    monthly = df.groupby('month', as_index=False)['amount'].sum()
+
+    fig = px.line(monthly, x='month', y='amount', markers=True,
+              title='Monthly Revenue Trend')
+    fig.update_layout(height=400)
     return fig
 
 
@@ -53,9 +64,14 @@ def green_plotly_pie():
     回傳 plotly Figure 物件
     提示：px.pie()
     """
-    df = pd.read_csv('datasets/ecommerce/orders_enriched.csv')
-    vip_orders = df.groupby('vip_level').size().reset_index(name='count')
-    fig = px.pie(vip_orders, values='count', names='vip_level', title='VIP 等級訂單數佔比')
+    # TODO: 你的程式碼
+    df = pd.read_csv(
+    'datasets/ecommerce/orders_enriched.csv',
+    parse_dates=['order_date'],)
+    vip_rev = df.groupby('vip_level', as_index=False)['amount'].sum()
+    fig = px.pie(vip_rev, names='vip_level', values='amount',
+             title='VIP Level Share', hole=0.4)
+    fig.update_layout(height=400)
     return fig
 
 
@@ -70,36 +86,30 @@ def yellow_clean_and_merge(raw_path, customers_path, products_path):
     2. 合併 customers.csv 和 products.csv
     回傳：合併後的 DataFrame
     """
-    # 讀取資料
-    orders = pd.read_csv(raw_path)
-    
-    # 清理欄位名稱
-    orders.columns = orders.columns.str.strip()
-    
-    # 清理 amount：移除 $ 和 , 轉 float
-    orders['amount'] = orders['amount'].astype(str).str.replace('$', '').str.replace(',', '').astype(float)
-    
-    # 填補 qty 缺值為 1
-    orders['qty'] = orders['qty'].fillna(1).astype(int)
-    
-    # 清理 order_date，drop 空值
-    orders = orders.dropna(subset=['order_date'])
-    
-    # 去重
-    orders = orders.drop_duplicates()
-    
-    # rename 欄位以匹配
-    orders = orders.rename(columns={'Order_ID': 'order_id', 'Product_ID': 'product_id'})
-    
-    # 讀取其他表
+    # TODO: 你的程式碼
+    df = pd.read_csv(
+    raw_path,
+    parse_dates=['order_date'],)
+    df.columns = df.columns.str.strip().str.lower()
+    df['amount'] = (
+        df['amount'].astype(str)
+        .str.replace('$', '', regex=False)
+        .str.replace(',', '', regex=False)
+        .astype(float)
+    )
+    df['order_date'] = pd.to_datetime(df['order_date'], errors='coerce')
+    df = df.dropna(subset=['order_date'])
+    df['qty'] = df['qty'].fillna(df['qty'].median())
+    df = df.drop_duplicates()
     customers = pd.read_csv(customers_path)
-    products = pd.read_csv(products_path)
-    
-    # 合併
-    df = orders.merge(customers, on='customer_id', how='left')
-    df = df.merge(products, on='product_id', how='left')
-    
-    return df
+    products  = pd.read_csv(products_path)
+
+    enriched = (
+    df
+    .merge(customers, on='customer_id', how='left')
+    .merge(products,  on='product_id',  how='left')
+)
+    return enriched
 
 
 def yellow_kpi_summary(df):
@@ -112,17 +122,36 @@ def yellow_kpi_summary(df):
         "avg_order_value": float,     # 平均客單價
     }
     """
-    total_revenue = df['amount'].sum()
-    order_count = df.shape[0]
-    active_customers = df['customer_id'].nunique()
-    avg_order_value = total_revenue / order_count if order_count > 0 else 0
+    # TODO: 你的程式碼
+    df = pd.read_csv('datasets/ecommerce/orders_raw.csv',
+    parse_dates=['order_date'],)
+    customers = pd.read_csv('datasets/ecommerce/customers.csv')
+    products  = pd.read_csv('datasets/ecommerce/products.csv')
+    df.columns = df.columns.str.strip().str.lower()
+    df['amount'] = (
+        df['amount'].astype(str)
+        .str.replace('$', '', regex=False)
+        .str.replace(',', '', regex=False)
+        .astype(float)
+    )
+    df['order_date'] = pd.to_datetime(df['order_date'], errors='coerce')
+    df = df.dropna(subset=['order_date'])
+    df['qty'] = df['qty'].fillna(df['qty'].median())
+    df = df.drop_duplicates()
     
-    return {
-        "total_revenue": total_revenue,
-        "order_count": order_count,
-        "active_customers": active_customers,
-        "avg_order_value": avg_order_value,
+    enriched = (
+    df
+    .merge(customers, on='customer_id', how='left')
+    .merge(products,  on='product_id',  how='left')
+    )
+    kpis = {
+    '總營收':     enriched['amount'].sum(),
+    '總訂單數':   len(enriched),
+    '活躍顧客數': enriched['customer_id'].nunique(),
+    '客單價':     enriched['amount'].sum() / len(enriched),
     }
+
+    return kpis
 
 
 def yellow_plotly_scatter(df):
@@ -135,8 +164,15 @@ def yellow_plotly_scatter(df):
     回傳 plotly Figure 物件
     提示：px.scatter(hover_data=['product_name'])
     """
-    fig = px.scatter(df, x='unit_price', y='amount', color='category', 
-                     hover_data=['product_name'], title='商品單價 vs 訂單金額')
+    # TODO: 你的程式碼
+    fig = px.scatter(
+        df,
+        x='unit_price',
+        y='amount',
+        color='category',
+        hover_data=['product_name'],
+        title='Unit Price vs. Amount by Category'
+    )
     return fig
 
 
@@ -161,4 +197,54 @@ def red_dashboard():
     提示：from plotly.subplots import make_subplots
     """
     # TODO: 你的程式碼
-    pass
+    df = pd.read_csv('datasets/ecommerce/orders_raw.csv',
+    parse_dates=['order_date'],)
+    customers = pd.read_csv('datasets/ecommerce/customers.csv')
+    products  = pd.read_csv('datasets/ecommerce/products.csv')
+    df.columns = df.columns.str.strip().str.lower()
+    df['amount'] = (
+        df['amount'].astype(str)
+        .str.replace('$', '', regex=False)
+        .str.replace(',', '', regex=False)
+        .astype(float)
+    )
+    df['order_date'] = pd.to_datetime(df['order_date'], errors='coerce')
+    df = df.dropna(subset=['order_date'])
+    df['qty'] = df['qty'].fillna(df['qty'].median())
+    df = df.drop_duplicates()
+    
+    enriched = (
+    df
+    .merge(customers, on='customer_id', how='left')
+    .merge(products,  on='product_id',  how='left')
+    )
+    monthly     = enriched.groupby('month', as_index=False)['amount'].sum()
+    top_prod    = (enriched.groupby('product_name', as_index=False)['amount']
+               .sum().sort_values('amount', ascending=False).head(10))
+    region_rev  = enriched.groupby('region', as_index=False)['amount'].sum()
+    cat_rev     = enriched.groupby('category', as_index=False)['amount'].sum()
+    fig = make_subplots(
+    rows=2, cols=2,
+    subplot_titles=('Monthly Revenue Trend',
+                    'Top 10 Products',
+                    'Revenue by Region',
+                    'Category Share'),
+    specs=[[{'type': 'xy'},     {'type': 'xy'}],
+           [{'type': 'xy'},     {'type': 'domain'}]],
+    )
+
+    fig.add_trace(go.Scatter(x=monthly['month'], y=monthly['amount'],
+                         mode='lines+markers', name='Monthly'), row=1, col=1)
+    fig.add_trace(go.Bar(x=top_prod['product_name'], y=top_prod['amount'],
+                     name='Top Products'), row=1, col=2)
+    fig.add_trace(go.Bar(x=region_rev['region'], y=region_rev['amount'],
+                     name='Region'), row=2, col=1)
+    fig.add_trace(go.Pie(labels=cat_rev['category'], values=cat_rev['amount'],
+                     name='Category', hole=0.4), row=2, col=2)
+
+    fig.update_layout(
+    title_text='<b>E-Commerce Sales Dashboard — 2025【解答版】</b>',
+    height=750, showlegend=False,
+    )
+    fig.update_xaxes(tickangle=45, row=1, col=2)
+    return fig

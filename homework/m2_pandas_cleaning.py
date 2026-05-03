@@ -20,10 +20,9 @@ def green_read_csv():
     提示：pd.read_csv()
     """
     # TODO: 你的程式碼
-    import pandas as pd
-    DATA = '../datasets/ecommerce/orders_raw.csv'
-    row = pd.read_csv(DATA)
-    return row
+    DATA = "/datasets/ecommerce/orders_raw.csv"
+    df = pd.read_csv(DATA)
+    return df
 
 
 def green_shape(df):
@@ -32,8 +31,7 @@ def green_shape(df):
     提示：df.shape
     """
     # TODO: 你的程式碼
-    DATA = '../datasets/ecommerce/orders_raw.csv'
-    df = pd.read_csv(DATA)
+    
     return df.shape
 
 
@@ -43,9 +41,8 @@ def green_dtypes(df):
     提示：df.dtypes
     """
     # TODO: 你的程式碼
-    DATA = '../datasets/ecommerce/orders_raw.csv'
-    df = pd.read_csv(DATA)
-    return df.types
+
+    return df.dtypes
 
 
 # ============================================================
@@ -59,10 +56,9 @@ def yellow_clean_columns(df):
     提示：df.columns.str.strip().str.lower()
     """
     # TODO: 你的程式碼
-    DATA = '../datasets/ecommerce/orders_raw.csv'
-    df = pd.read_csv(DATA)
+
     df.columns = df.columns.str.strip().str.lower()
-    return df.columns
+    return df
 
 
 def yellow_clean_amount(df):
@@ -73,10 +69,12 @@ def yellow_clean_amount(df):
     提示：.str.replace() + .astype(float)
     """
     # TODO: 你的程式碼
-    DATA = '../datasets/ecommerce/orders_raw.csv'
-    df = pd.read_csv(DATA)
-    df['amount'] = df['amount'].str.replace('$','',regex=False).str.replace(',','',regex=False).astype(float)
-    return df['amount']
+    arr = (df['amount']
+                .astype(str)
+                .str.replace('$', '', regex=False)
+                .str.replace(',', '', regex=False)
+                .astype(float))
+    return arr
 
 
 def yellow_drop_duplicates(df):
@@ -85,11 +83,9 @@ def yellow_drop_duplicates(df):
     提示：df.drop_duplicates()
     """
     # TODO: 你的程式碼
-    DATA = '../datasets/ecommerce/orders_raw.csv'
-    df = pd.read_csv(DATA)
-    df = df.drop_duplicates()
-    return df
 
+    arr = df.drop_duplicates()
+    return arr
 
 
 # ============================================================
@@ -110,20 +106,16 @@ def red_clean_orders(path):
     提示：pd.to_datetime(errors='coerce')
     """
     # TODO: 你的程式碼
+
     df = pd.read_csv(path)
-
     df.columns = df.columns.str.strip().str.lower()
-
-    df['amount'] = df['amount'].astype(str) .str.replace('$', '', regex=False) .str.replace(',', '', regex=False) .astype(float) 
-
-    df['order_date'] = pd.to_datetime(df['order_date'], errors='coerce')
-
-    df = df.dropna(subset=['order_date']) 
-
-    df['qty'] = df['qty'].fillna(df['qty'].median()) 
-
-    df = df.drop_duplicates() 
-    
+    df["amount"] = (df['amount']
+                .astype(str)
+                .str.replace('$', '', regex=False)
+                .str.replace(',', '', regex=False)
+                .astype(float))
+    df["order_date"] = pd.to_datetime(df['order_date'], errors='coerce')
+    df = df.dropna(subset=['order_date'])
+    df['qty'] = df['qty'].fillna(df['qty'].median())
+    df = df.drop_duplicates()
     return df
-
-red_clean_orders('../datasets/ecommerce/orders_raw.csv')
