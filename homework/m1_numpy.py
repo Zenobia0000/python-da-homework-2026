@@ -20,21 +20,21 @@ def green_mean():
     """建立 [10, 20, 30, 40, 50]，回傳所有元素的平均值 (float)"""
     arr = np.array([10,20,30,40,50]) 
     return arr.mean()
-print(green_mean())
+
     
 
 def green_double():
     """建立 [10, 20, 30, 40, 50]，回傳所有元素乘以 2 的 ndarray"""
     arr = np.array([10,20,30,40,50])
     return arr*2
-print(green_double())
+
 
 def green_filter():
     """建立 [10, 20, 30, 40, 50]，回傳大於 25 的元素 (ndarray)"""
     arr = np.array([10,20,30,40,50])
     result = arr[arr>25]
     return result
-print(green_filter())
+
 
 # ============================================================
 # 🟡 核心題（每題 15 分，共 45 分）
@@ -48,9 +48,7 @@ def yellow_expensive_count(prices):
     
     return gold
 
-test_prices = [500, 1200, 800, 2500, 100]
-test_prices = len(yellow_expensive_count(test_prices))
-print(test_prices)
+
 
 
 
@@ -59,8 +57,7 @@ def yellow_top3_stock_indices(stocks):
     indices = np.argsort(arr)[::-1][:3]
     top3_values = arr[indices]
     return  top3_values
-list = [100,200,300,400,500]
-print(yellow_top3_stock_indices(list))    
+   
     
 
 # """
