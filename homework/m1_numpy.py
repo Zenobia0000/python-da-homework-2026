@@ -92,7 +92,6 @@ def yellow_restock_cost(prices, stocks):
     # print(f'便宜商品數量 ＝{mask_cheap.sum()}項')
     # print(f'總進貨成本 ＝ NT$ {total_cost:,.0f}')
     return total_cost
-result = yellow_restock_cost(prices, stocks)
 # print(result)
 
 
