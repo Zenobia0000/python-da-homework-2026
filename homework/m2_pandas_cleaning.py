@@ -20,7 +20,11 @@ def green_read_csv():
     提示：pd.read_csv()
     """
     # TODO: 你的程式碼
-    pass
+    #藥用變數去接住他
+    df = pd.read_csv("datasets/ecommerce/orders_raw.csv")
+    return df
+    
+    
 
 
 def green_shape(df):
@@ -29,7 +33,9 @@ def green_shape(df):
     提示：df.shape
     """
     # TODO: 你的程式碼
-    pass
+    return df.shape
+    
+    
 
 
 def green_dtypes(df):
@@ -38,7 +44,8 @@ def green_dtypes(df):
     提示：df.dtypes
     """
     # TODO: 你的程式碼
-    pass
+    return df.dtypes
+    
 
 
 # ============================================================
@@ -52,7 +59,13 @@ def yellow_clean_columns(df):
     提示：df.columns.str.strip().str.lower()
     """
     # TODO: 你的程式碼
-    pass
+    #df.columns.str.strip().str.lower() 只是算出結果
+    # 不要修改原本的df所以要先複製
+    df2 = df.copy()
+    # 一定要寫df2.columns ，= 不能寫df2 = (會變成整個df2 dataframe))
+    df2.columns = df2.columns.str.strip().str.lower()
+    return df2
+    
 
 
 def yellow_clean_amount(df):
@@ -63,6 +76,12 @@ def yellow_clean_amount(df):
     提示：.str.replace() + .astype(float)
     """
     # TODO: 你的程式碼
+    df3 = df.copy()
+    # 先把所有轉成str就可以安全的replace
+    # regex 是正規表達式，用規則描述字串，pandas預設用regex
+    # regex中.是指任意字元，$代表字串結尾
+    df3["amount"] = (df3["amount"].astype(str).str.replace("$","",regex = False).str.replace(",","",regex = False).astype(float))
+    return df3
     pass
 
 
@@ -72,6 +91,10 @@ def yellow_drop_duplicates(df):
     提示：df.drop_duplicates()
     """
     # TODO: 你的程式碼
+    # drop_duplicates預設會回傳新的df，do not need copy
+    # drop_duplicates本身預設就是對列去查
+    return df.drop_duplicates()
+    
     pass
 
 
@@ -93,4 +116,15 @@ def red_clean_orders(path):
     提示：pd.to_datetime(errors='coerce')
     """
     # TODO: 你的程式碼
-    pass
+    df = pd.read_csv(path)
+    df.columns = df.columns.str.strip().str.lower()
+    df["amount"] =(df["amount"].astype(str).str.replace("$","",regex = False).str.replace(",","",regex=False).astype(float))
+    # 日期轉換，如果有錯(error)就強制(coerce)轉成NaT (另外還有ignore(啥都不做)跟raise(確保資料完全正確))
+    df["order_date"]=pd.to_datetime(df["order_date"], errors = "coerce")
+    # 刪除為空的列，用dropna
+    df = df.dropna(subset=["amount","order_date"])
+    
+    # 刪除重複
+    df = df.drop_duplicates() 
+    #要最後return
+    return df

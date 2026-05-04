@@ -1,6 +1,6 @@
 """
 M4 時間序列與 EDA — 課後作業
-==============================
+===============d===============
 情境：用合併好的訂單資料做時間維度分析，
 產出月報級別的商業洞察。
 
@@ -27,7 +27,10 @@ def green_avg_by_month():
     提示：df['order_date'].dt.month
     """
     # TODO: 你的程式碼
-    pass
+    df = _load_data()
+    df['order_date'] = pd.to_datetime(df['order_date'])
+    mon = df.groupby(df['order_date'].dt.month)['amount'].mean()
+    return mon
 
 
 def green_top3_dates():
@@ -37,7 +40,12 @@ def green_top3_dates():
     提示：value_counts().head(3)
     """
     # TODO: 你的程式碼
-    pass
+    df = _load_data()
+    df['order_date'] = pd.to_datetime(df['order_date'])
+    # 可能會把不同時間當成不同日期，所以要把時拿掉留下日就好
+    df['order_date'] = pd.to_datetime(df['order_date']).dt.date
+    top3 = df['order_date'].value_counts().head(3)
+    return top3
 
 
 def green_date_range():
@@ -46,7 +54,11 @@ def green_date_range():
     格式為 pandas Timestamp
     """
     # TODO: 你的程式碼
-    pass
+    # 這樣就是timestamp型態
+    #  dt.date會是 datetime.date的型態
+    df = _load_data()
+    dates  = pd.to_datetime(df['order_date'])
+    return (dates.min(), dates.max())
 
 
 # ============================================================
@@ -60,7 +72,13 @@ def yellow_monthly_revenue():
     提示：set_index('order_date').resample('ME')['amount'].sum()
     """
     # TODO: 你的程式碼
-    pass
+    df = _load_data()
+    # 確保是datetime
+    df['order_date'] = pd.to_datetime(df['order_date'])
+    #set_index 是把時間變成index 時間序列分系必備
+    # resample是時間版的groupby
+    rev = df.set_index('order_date').resample('ME')['amount'].sum()
+    return rev
 
 
 def yellow_rolling_avg(monthly_revenue):
@@ -71,7 +89,7 @@ def yellow_rolling_avg(monthly_revenue):
     提示：.rolling(window=3).mean()
     """
     # TODO: 你的程式碼
-    pass
+    return monthly_revenue.rolling(window = 3).mean()
 
 
 def yellow_category_median(df):
@@ -81,7 +99,10 @@ def yellow_category_median(df):
     提示：groupby + median + sort_values
     """
     # TODO: 你的程式碼
-    pass
+    val = df.groupby('category')['amount'].median()
+    #val 是一個series，沒有欄位名稱 ，所以要不指定欄位排序
+    val = val.sort_values(ascending = False)
+    return val
 
 
 # ============================================================
@@ -89,16 +110,39 @@ def yellow_category_median(df):
 # ============================================================
 
 def red_monthly_report():
-    """
-    產出月報 DataFrame，每月一列，包含：
-    - order_count：當月訂單數
-    - revenue：當月總營收
-    - active_customers：當月不重複客戶數
-    - avg_order_value：客單價（revenue / order_count）
-    - revenue_growth：月營收成長率（相對上月的 % 變化）
+    df = _load_data()
 
-    index 為月份 (period 或 datetime)
-    提示：resample + agg + pct_change
-    """
-    # TODO: 你的程式碼
-    pass
+    # datetime
+    df['order_date'] = pd.to_datetime(df['order_date'])
+
+    # 設 index
+    df = df.set_index('order_date')
+
+    # 每月聚合
+    monthly = df.resample('ME').agg({
+        'order_id': 'count',
+        'amount': 'sum',
+        'customer_id': 'nunique'
+    })
+
+    # 改欄位名稱
+    monthly.columns = [
+        'order_count',
+        'revenue',
+        'active_customers'
+    ]
+
+    # 客單價
+    monthly['avg_order_value'] = (
+        monthly['revenue'] / monthly['order_count']
+    )
+
+    # 6成長率
+    monthly['revenue_growth'] = (
+        monthly['revenue'].pct_change()
+    )
+
+    # 7️轉 period
+    monthly.index = monthly.index.to_period('M')
+
+    return monthly
