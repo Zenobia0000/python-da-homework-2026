@@ -18,20 +18,22 @@ import numpy as np
 
 def green_mean():
     """建立 [10, 20, 30, 40, 50]，回傳所有元素的平均值 (float)"""
-    # TODO: 你的程式碼
-    pass
-
+    arr = np.array([10, 20, 30, 40, 50])
+    return arr
 
 def green_double():
     """建立 [10, 20, 30, 40, 50]，回傳所有元素乘以 2 的 ndarray"""
-    # TODO: 你的程式碼
-    pass
+    arr = np.array([10, 20, 30, 40, 50])
+    arr = arr*2
+    return arr
+
 
 
 def green_filter():
     """建立 [10, 20, 30, 40, 50]，回傳大於 25 的元素 (ndarray)"""
-    # TODO: 你的程式碼
-    pass
+    arr = np.array([10, 20, 30, 40, 50])
+    arr = arr[arr>25]
+    return arr
 
 
 # ============================================================
@@ -39,29 +41,32 @@ def green_filter():
 # 以下函式會接收從 products.csv 讀出的 prices, stocks 陣列
 # ============================================================
 
+# ---------- 載入 products.csv ----------
+DATA_PATH = "datasets/ecommerce/products.csv"
+prices = np.genfromtxt(DATA_PATH, delimiter=",", skip_header=1, usecols=3)
+stocks = np.genfromtxt(DATA_PATH, delimiter=",", skip_header=1, usecols=4)
+
 def yellow_expensive_count(prices):
     """回傳單價 > 1000 的商品數量 (int)"""
-    # TODO: 你的程式碼
-    pass
-
+    rrrr = len(prices[prices>1000])
+    return rrrr
 
 def yellow_top3_stock_indices(stocks):
     """
     回傳庫存最多的前 3 個商品的索引位置 (ndarray, 由大到小排)
     提示：np.argsort
     """
-    # TODO: 你的程式碼
-    pass
-
+    GGGG = np.argsort(stocks)[::-1][:3]
+    return GGGG
 
 def yellow_restock_cost(prices, stocks):
     """
     單價 < 500 的商品，每種各進貨 50 個，回傳總花費 (float/int)
     提示：布林遮罩 + .sum()
     """
-    # TODO: 你的程式碼
-    pass
-
+    rrrr = (prices[prices<500]*50).sum()
+    
+    return rrrr
 
 # ============================================================
 # 🔴 挑戰題（25 分）
@@ -76,5 +81,6 @@ def red_double11_prices(prices, stocks):
     回傳每個商品的雙 11 售價 (ndarray)
     提示：np.where 可以巢狀使用
     """
-    # TODO: 你的程式碼
-    pass
+    new_prices = np.where(stocks>=100 ,prices * 0.7,np.where((stocks>=20)&(stocks<100),prices*0.9,prices))
+    print(new_prices)
+    return new_prices
